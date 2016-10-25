@@ -82,6 +82,8 @@ lakes.limno=merge(tp.chla.secchi, lake.chars, by="lagoslakeid", all.x=TRUE, all.
 
 #how many lakes do we have?
 dim(lakes.limno)
+length(unique(lakes.limno$lagoslakeid))
+
 length(unique(annual.tp$lagoslakeid))
 (82808-sum(is.na(lakes.limno$annual.tp)))/length(unique(annual.tp$lagoslakeid))
 length(unique(annual.chla$lagoslakeid))
