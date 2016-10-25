@@ -1,0 +1,1 @@
+#climate metrics (at hu12 scale, smallest available) to use in multitask learning analysis.  mix of monthly and annual data.
