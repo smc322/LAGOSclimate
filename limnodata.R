@@ -52,8 +52,8 @@ secchi.summer.3 = secchi[which(secchi$samplemonth==9 & secchi$DoM<=15),]
 secchi.summer = rbind(secchi.summer.1, secchi.summer.2, secchi.summer.3)
 
 #cut off any samples before 1970 (that's when monthly/annual climate samples start)
-data.summer.current = data.summer[which(data.summer$sampleyear %in% c(1970:2013)), ]
-secchi.summer.current = secchi.summer[which(secchi.summer$sampleyear %in% c(1970:2013)), ]
+data.summer.current = data.summer[which(data.summer$sampleyear %in% c(1971:2013)), ]
+secchi.summer.current = secchi.summer[which(secchi.summer$sampleyear %in% c(1971:2013)), ]
 
 #take yearly average of each limno variable
 
