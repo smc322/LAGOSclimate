@@ -2,46 +2,58 @@
 
 ## Modified version of Sam's code to convert monthly climate variables into yearly climate variables and convert monthly climate vars to seasonal climate vars
 
-setwd("~/Dropbox/CSI/GEO-Shared2/GeoBulkReLoad/Z_MISC-folders/zz-files from Nicole/PRISM monthly 06-26-2014")
+
+#copied merged HU12 and index raw data to a local folder
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2016_climate_waterqual/Data/Climate_raw")
+
+#list of vars to include:
+#annuals: temp and precip from year x, and x-1 (4)
+#seasonals: fall, winter, spring, summer for temp and precip (8)
+#monthlys: 12 mo temp and precip (sept x-1 to aug x) (24)
+#indicies: PDSI, ENSO, NAO for year x and year x-1.  PDSI is specific by state, others are same for everything (6)
+#total is 42 variables
 
 # convert montly vals to annual vals
 # note that this code accounts for number of days per month 
 # and leap years
+# changed sam's standard code to include a Sept-Aug year to be the 12 months before sampling (limno samples are summer medians so went with August becuase we don't knwo which month data are actually from)
+
 climate.month.to.year <- function(variable, scale) {
   temp = read.table(paste(scale, "_", variable, "_merge.txt", sep = ""), header = TRUE)
   for (i in 1:nrow(temp)){
     if (temp$year[i] %in% seq(1972,2011,4) == TRUE) {
-      temp$annual[i] = ((temp$January[i]*31) + 
-                          (temp$February[i]*29) +
+      temp$annual[i] = ((temp$September[i-1]*30) + 
+                          (temp$October[i-1]*31) +
+                          (temp$November[i-1]*30) + 
+                          (temp$December[i-1]*31) + 
+                          (temp$January[i]*31) +
+                          (temp$February[i]*29) + 
                           (temp$March[i]*31) + 
-                          (temp$April[i]*30) + 
-                          (temp$May[i]*31) +
+                          (temp$April[i]*30) +
+                          (temp$May[i]*31) + 
                           (temp$June[i]*30) + 
-                          (temp$July[i]*31) + 
-                          (temp$August[i]*31) +
-                          (temp$September[i]*30) + 
-                          (temp$October[i]*31) + 
-                          (temp$November[i]*30) +
-                          (temp$December[i]*31))/366
+                          (temp$July[i]*31) +
+                          (temp$August[i]*31))/366
       
       
     } else {
-      temp$annual[i] = ((temp$January[i]*31) + 
-                          (temp$February[i]*28) +
+      temp$annual[i] = ((temp$September[i-1]*30) + 
+                          (temp$October[i-1]*31) +
+                          (temp$November[i-1]*30) + 
+                          (temp$December[i-1]*31) + 
+                          (temp$January[i]*31) +
+                          (temp$February[i]*28) + 
                           (temp$March[i]*31) + 
-                          (temp$April[i]*30) + 
-                          (temp$May[i]*31) +
+                          (temp$April[i]*30) +
+                          (temp$May[i]*31) + 
                           (temp$June[i]*30) + 
-                          (temp$July[i]*31) + 
-                          (temp$August[i]*31) +
-                          (temp$September[i]*30) + 
-                          (temp$October[i]*31) + 
-                          (temp$November[i]*30) +
-                          (temp$December[i]*31))/365
+                          (temp$July[i]*31) +
+                          (temp$August[i]*31))/365
     }
   }
   return(temp)
 }
+
 
 # convert monthly vals to seasonal vals,
 # where winter = Dec, Jan, Feb
@@ -78,6 +90,8 @@ climate.month.to.season <- function(variable, scale) {
   return(temp)
 }
 
-hu4.tmean.annual = climate.month.to.year("tmean", "HU4")
-hu4.ppt.annual = climate.month.to.year("ppt", "HU4")
-hu4.tmean.season = climate.month.to.season("tmean", "HU4")
+hu12.tmean.annual = climate.month.to.year("tmean", "HU12")
+hu12.ppt.annual = climate.month.to.year("ppt", "HU12")
+hu12.tmean.season = climate.month.to.season("tmean", "HU12")
+hu12.tmin.annual = climate.month.to.year("tmin", "HU12")
+hu12.tmax.annual = climate.month.to.year("tmax", "HU12")

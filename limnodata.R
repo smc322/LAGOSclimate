@@ -51,9 +51,9 @@ secchi.summer.2 = secchi[which(secchi$samplemonth==6 & secchi$DoM>=15),]
 secchi.summer.3 = secchi[which(secchi$samplemonth==9 & secchi$DoM<=15),]
 secchi.summer = rbind(secchi.summer.1, secchi.summer.2, secchi.summer.3)
 
-#cut off any samples before 1970 (that's when monthly/annual climate samples start)
-data.summer.current = data.summer[which(data.summer$sampleyear %in% c(1971:2013)), ]
-secchi.summer.current = secchi.summer[which(secchi.summer$sampleyear %in% c(1971:2013)), ]
+#wanted to cut off any samples before 1970 (that's when monthly/annual climate samples start), but would need to use 1971 or 1972 because we need year x-1 cliamte data.  But for some reason ENSO data don't start until 1979 even though everything else is 1970?  So for now went with 1980 (to have ENSO for year x and year x-1) but should look into this.  We only lose a few hundred lakes by eliminating the 1970's.  Monthly/annual climate end in 2011 so stopped there even though there are some limno data from 2012 and 2013.  That eliminates only a handful of lakes though.
+data.summer.current = data.summer[which(data.summer$sampleyear %in% c(1980:2011)), ]
+secchi.summer.current = secchi.summer[which(secchi.summer$sampleyear %in% c(1980:2011)), ]
 
 #take yearly average of each limno variable
 
