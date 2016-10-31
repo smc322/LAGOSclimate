@@ -95,3 +95,16 @@ hu12.ppt.annual = climate.month.to.year("ppt", "HU12")
 hu12.tmean.season = climate.month.to.season("tmean", "HU12")
 hu12.tmin.annual = climate.month.to.year("tmin", "HU12")
 hu12.tmax.annual = climate.month.to.year("tmax", "HU12")
+hu12.ppt.season = climate.month.to.season("ppt", "HU12")
+
+
+#these took freaking forever (hours each) to calculate so save them as .csv now for any future needs
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2016_climate_waterqual/Data/Annual_monthly_calculated")
+
+write.csv(hu12.tmean.annual, "hu12_tmean_annual.csv")
+write.csv(hu12.tmin.annual, "hu12_tmin_annual.csv")
+write.csv(hu12.tmax.annual, "hu12_tmax_annual.csv")
+write.csv(hu12.ppt.annual, "hu12_ppt_annual.csv")
+write.csv(hu12.tmean.season, "hu12_tmean_seasonal.csv")
+write.csv(hu12.ppt.season, "hu12_ppt_seasonal.csv")
+
