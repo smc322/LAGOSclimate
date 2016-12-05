@@ -82,7 +82,7 @@ secchi.aug.current = secchi.aug[which(secchi.aug$sampleyear %in% c(1980:2011)), 
 tp.data.june = data.june.current[!is.na(data.june.current$tp),]
 annual.tp.june = aggregate(tp.data.june[,c("tp")], by=list(tp.data.june$lagoslakeid, tp.data.june$sampleyear), FUN="median")
 names(annual.tp.june)<-c("lagoslakeid", "year", "june.tp")
-annual.tp = annual.tp[order(annual.tp$lagoslakeid, annual.tp$year),]
+annual.tp.june = annual.tp[order(annual.tp$lagoslakeid, annual.tp$year),]
 
 chla.data.june = data.june.current[!is.na(data.june.current$chla),]
 annual.chla.june = aggregate(chla.data.june[,c("chla")], by=list(chla.data.june$lagoslakeid, chla.data.june$sampleyear), FUN="median")
@@ -94,10 +94,17 @@ annual.secchi.june = aggregate(secchi.data.june[,c("secchi")], by=list(secchi.da
 names(annual.secchi.june)<-c("lagoslakeid", "year", "june.secchi")
 annual.secchi.june = annual.secchi.june[order(annual.secchi.june$lagoslakeid, annual.secchi.june$year),]
 
+tn.data.june = data.june.current[!is.na(data.june.current$tn),]
+annual.tn.june = aggregate(tn.data.june[,c("tn")], by=list(tn.data.june$lagoslakeid, tn.data.june$sampleyear), FUN="median")
+names(annual.tn.june)<-c("lagoslakeid", "year", "june.tn")
+annual.tn.june = annual.tn.june[order(annual.tn.june$lagoslakeid, annual.tn.june$year),]
+
+##july data
+
 tp.data.july = data.july.current[!is.na(data.july.current$tp),]
 annual.tp.july = aggregate(tp.data.july[,c("tp")], by=list(tp.data.july$lagoslakeid, tp.data.july$sampleyear), FUN="median")
 names(annual.tp.july)<-c("lagoslakeid", "year", "july.tp")
-annual.tp = annual.tp[order(annual.tp$lagoslakeid, annual.tp$year),]
+annual.tp.july = annual.tp.july[order(annual.tp.july$lagoslakeid, annual.tp.july$year),]
 
 chla.data.july = data.july.current[!is.na(data.july.current$chla),]
 annual.chla.july = aggregate(chla.data.july[,c("chla")], by=list(chla.data.july$lagoslakeid, chla.data.july$sampleyear), FUN="median")
@@ -109,11 +116,17 @@ annual.secchi.july = aggregate(secchi.data.july[,c("secchi")], by=list(secchi.da
 names(annual.secchi.july)<-c("lagoslakeid", "year", "july.secchi")
 annual.secchi.july = annual.secchi.july[order(annual.secchi.july$lagoslakeid, annual.secchi.july$year),]
 
+tn.data.july = data.july.current[!is.na(data.july.current$tn),]
+annual.tn.july = aggregate(tn.data.july[,c("tn")], by=list(tn.data.july$lagoslakeid, tn.data.july$sampleyear), FUN="median")
+names(annual.tn.july)<-c("lagoslakeid", "year", "july.tn")
+annual.tn.july = annual.tn.july[order(annual.tn.july$lagoslakeid, annual.tn.july$year),]
+
+##august data
 
 tp.data.aug = data.aug.current[!is.na(data.aug.current$tp),]
 annual.tp.aug = aggregate(tp.data.aug[,c("tp")], by=list(tp.data.aug$lagoslakeid, tp.data.aug$sampleyear), FUN="median")
 names(annual.tp.aug)<-c("lagoslakeid", "year", "aug.tp")
-annual.tp = annual.tp[order(annual.tp$lagoslakeid, annual.tp$year),]
+annual.tp.aug = annual.tp.aug[order(annual.tp.aug$lagoslakeid, annual.tp.aug$year),]
 
 chla.data.aug = data.aug.current[!is.na(data.aug.current$chla),]
 annual.chla.aug = aggregate(chla.data.aug[,c("chla")], by=list(chla.data.aug$lagoslakeid, chla.data.aug$sampleyear), FUN="median")
@@ -125,26 +138,30 @@ annual.secchi.aug = aggregate(secchi.data.aug[,c("secchi")], by=list(secchi.data
 names(annual.secchi.aug)<-c("lagoslakeid", "year", "aug.secchi")
 annual.secchi.aug = annual.secchi.aug[order(annual.secchi.aug$lagoslakeid, annual.secchi.aug$year),]
 
+tn.data.aug = data.aug.current[!is.na(data.aug.current$tn),]
+annual.tn.aug = aggregate(tn.data.aug[,c("tn")], by=list(tn.data.aug$lagoslakeid, tn.data.aug$sampleyear), FUN="median")
+names(annual.tn.aug)<-c("lagoslakeid", "year", "aug.tn")
+annual.tn.aug = annual.tn.aug[order(annual.tn.aug$lagoslakeid, annual.tn.aug$year),]
+
 #trim lake characteristics data frame to what we need (lakeid, hu12id, lat and long to plot location of sampled lakes)
 lake.chars = data.lake.specific[,c(1, 3, 4, 14, 20)]
 
-#merge three limno variables into lake characteristics trimmed for each month
+#merge four limno variables into lake characteristics trimmed for each month
 tp.chla.june=merge(annual.tp.june, annual.chla.june, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=TRUE)
 tp.chla.secchi.june=merge(tp.chla.june, annual.secchi.june, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=TRUE)
-lakes.limno.june=merge(tp.chla.secchi.june, lake.chars, by="lagoslakeid", all.x=TRUE, all.y=FALSE)
+tp.chla.secchi.tn.june=merge(tp.chla.secchi.june, annual.tn.june, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=FALSE)
+lakes.limno.june=merge(tp.chla.secchi.tn.june, lake.chars, by="lagoslakeid", all.x=TRUE, all.y=FALSE)
 
 tp.chla.july=merge(annual.tp.july, annual.chla.july, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=TRUE)
 tp.chla.secchi.july=merge(tp.chla.july, annual.secchi.july, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=TRUE)
-lakes.limno.july=merge(tp.chla.secchi.july, lake.chars, by="lagoslakeid", all.x=TRUE, all.y=FALSE)
+tp.chla.secchi.tn.july=merge(tp.chla.secchi.july, annual.tn.july, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=TRUE)
+lakes.limno.july=merge(tp.chla.secchi.tn.july, lake.chars, by="lagoslakeid", all.x=TRUE, all.y=FALSE)
 
 tp.chla.aug=merge(annual.tp.aug, annual.chla.aug, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=TRUE)
 tp.chla.secchi.aug=merge(tp.chla.aug, annual.secchi.aug, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=TRUE)
-lakes.limno.aug=merge(tp.chla.secchi.aug, lake.chars, by="lagoslakeid", all.x=TRUE, all.y=FALSE)
+tp.chla.secchi.tn.aug=merge(tp.chla.secchi.aug, annual.tn.aug, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=TRUE)
+lakes.limno.aug=merge(tp.chla.secchi.tn.aug, lake.chars, by="lagoslakeid", all.x=TRUE, all.y=FALSE)
 
-#data.for.nick.pdsi<-lakes.limno[!duplicated(lakes.limno[,'lagoslakeid']),]
-#data.for.nick.pdsi<-data.for.nick.pdsi[,c(1, 6,7)]
-#setwd("/Users/SarahiMac/Dropbox/Sarah_Work/Manuscripts/2016_climate_waterqual/Data")
-#write.csv(data.for.nick.pdsi, "climate.lake.coords.for.pdsi.csv")
 
 #how many lakes do we have?
 dim(lakes.limno.june)
