@@ -63,18 +63,30 @@ climate.month.to.year <- function(variable, scale) {
 # note that the first year in record (1970) has NA values because 
 # winter is calculated with previous years' December value, and there is no
 # 1969 data
+
+###Sam and Eric and I identified a fix for this because the indexing would use the previous hu12
+##rather than the previous year for the first year of each unit. and it would be messed up
+##if we didn't have a well sorted file by spatial unit and year.  Hence, we define current year and
+##current spatial unit so we can make sure the december value from the previous year and the rest of the
+##vals in a given column match well.  Identified this while doing the same thing with PDSI data. Sam's 
+##original version is ok because it assigns NAs to the first year of each HU12
+
 climate.month.to.season <- function(variable, scale) {
   temp = read.table(paste(scale, "_", variable, "_merge.txt", sep = ""), header = TRUE)
   for (i in 1:(nrow(temp))) {
+    current_year = temp$year[i]
+    current_id = temp[i,1]
     if (temp$year[i] > 1970) {
       if (temp$year[i] %in% seq(1972,2011,4) == TRUE) {
-        temp$winter[i] = ((temp$December[i-1]*31) + (temp$January[i]*31) + (temp$February[i]*29))/91
+        temp$winter[i] = temp$December[temp$year == (current_year-1)&temp[,1] == current_id]
+        temp$winter[i] = ((temp$winter[i]*31)  + (temp$January[i]*31) + (temp$February[i]*29))/91
         temp$spring[i] = ((temp$March[i]*31) + (temp$April[i]*30) + (temp$May[i]*31))/92
         temp$summer[i] = ((temp$June[i]*30) + (temp$July[i]*31) + (temp$August[i]*31))/92
         temp$fall[i] = ((temp$September[i]*30) + (temp$October[i]*31) + (temp$November[i]*30))/91
         
       } else {
-        temp$winter[i] = ((temp$December[i-1]*31) + (temp$January[i]*31) + (temp$February[i]*28))/90
+        temp$winter[i] = temp$December[temp$year == (current_year-1)&temp[,1] == current_id]
+        temp$winter[i] = ((temp$winter[i]*31) + (temp$January[i]*31) + (temp$February[i]*28))/90
         temp$spring[i] = ((temp$March[i]*31) + (temp$April[i]*30) + (temp$May[i]*31))/92
         temp$summer[i] = ((temp$June[i]*30) + (temp$July[i]*31) + (temp$August[i]*31))/92
         temp$fall[i] = ((temp$September[i]*30) + (temp$October[i]*31) + (temp$November[i]*30))/91
@@ -82,13 +94,18 @@ climate.month.to.season <- function(variable, scale) {
       }
     } else {
       temp$winter[i] = NA
-      temp$spring[i] = NA
-      temp$summer[i] = NA
-      temp$fall[i] = NA
+      temp$winter[i] = ((temp$winter[i]*31) + (temp$January[i]*31) + (temp$February[i]*28))/90
+      temp$spring[i] = ((temp$March[i]*31) + (temp$April[i]*30) + (temp$May[i]*31))/92
+      temp$summer[i] = ((temp$June[i]*30) + (temp$July[i]*31) + (temp$August[i]*31))/92
+      temp$fall[i] = ((temp$September[i]*30) + (temp$October[i]*31) + (temp$November[i]*30))/91
+      
     }
   }
   return(temp)
 }
+
+
+
 
 hu12.tmean.annual = climate.month.to.year("tmean", "HU12")
 hu12.ppt.annual = climate.month.to.year("ppt", "HU12")
