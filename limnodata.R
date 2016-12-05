@@ -72,13 +72,24 @@ annual.secchi = aggregate(secchi.data[,c("secchi")], by=list(secchi.data$lagosla
 names(annual.secchi)<-c("lagoslakeid", "year", "annual.secchi")
 annual.secchi = annual.secchi[order(annual.secchi$lagoslakeid, annual.secchi$year),]
 
+tn.data = data.summer.current[!is.na(data.summer.current$tn),]
+annual.tn = aggregate(tn.data[,c("tn")], by=list(tn.data$lagoslakeid, tn.data$sampleyear), FUN="median")
+names(annual.tn)<-c("lagoslakeid", "year", "annual.tn")
+annual.tn = annual.tn[order(annual.tn$lagoslakeid, annual.tn$year),]
+
 #trim lake characteristics data frame to what we need (lakeid, hu12id, lat and long to plot location of sampled lakes)
 lake.chars = data.lake.specific[,c(1, 3, 4, 14, 20)]
 
 #merge three limno variables into lake characteristics trimmed
 tp.chla=merge(annual.tp, annual.chla, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=TRUE)
 tp.chla.secchi=merge(tp.chla, annual.secchi, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=TRUE)
-lakes.limno=merge(tp.chla.secchi, lake.chars, by="lagoslakeid", all.x=TRUE, all.y=FALSE)
+tp.chla.secchi.tn=merge(tp.chla.secchi, annual.tn, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=TRUE)
+lakes.limno=merge(tp.chla.secchi.tn, lake.chars, by="lagoslakeid", all.x=TRUE, all.y=FALSE)
+
+#data.for.nick.pdsi<-lakes.limno[!duplicated(lakes.limno[,'lagoslakeid']),]
+#data.for.nick.pdsi<-data.for.nick.pdsi[,c(1, 6,7)]
+#setwd("/Users/SarahiMac/Dropbox/Sarah_Work/Manuscripts/2016_climate_waterqual/Data")
+#write.csv(data.for.nick.pdsi, "climate.lake.coords.for.pdsi.csv")
 
 #how many lakes do we have?
 dim(lakes.limno)
