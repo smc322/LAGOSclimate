@@ -122,6 +122,6 @@ write.csv(hu12.tmean.annual, "hu12_tmean_annual.csv")
 write.csv(hu12.tmin.annual, "hu12_tmin_annual.csv")
 write.csv(hu12.tmax.annual, "hu12_tmax_annual.csv")
 write.csv(hu12.ppt.annual, "hu12_ppt_annual.csv")
-write.csv(hu12.tmean.season, "hu12_tmean_seasonal.csv")
-write.csv(hu12.ppt.season, "hu12_ppt_seasonal.csv")
+write.csv(hu12.tmean.season, "hu12_tmean_seasonal_updated.csv")
+write.csv(hu12.ppt.season, "hu12_ppt_seasonal_updated.csv")
 
