@@ -1,10 +1,12 @@
 #merging limno data and climate data into a single table for Shuai to use.  horizontal format here, but could switch to vertical if needed?
 
-#merge by hu12, include all limno data but only include climate data for years where we have limno data for years and lakes where we have data for at least one limno variable (secchi tp or chla)
+#merge by hu12, include all limno data but only include climate data for years where we have limno data for years and lakes where we have data for at least one limno variable (secchi tp chla or tn)
 
 #from limno script, need dataframe lakes.limno (limno data, lakeid, year, hu12, hu4 identifiers, and lat long data in case we need it)
 #from climate script, need 
 #add a second year column to the limno data that is called "yearx1" to match the one with the modified yar in climate data, but it shoudl stay the same year so we can match them...
+
+#for palmer data, need to merge separately by lagoslakeid, added that for updated data in December 2016 ater nick sent improved palmer data that are calculated by lake.
 
 setwd("~/Dropbox/Sarah_Work/Manuscripts/2016_climate_waterqual/Data/Annual_monthly_calculated")
 
@@ -93,3 +95,6 @@ limno.all.climate.palmer$yrx1=NULL
 
 setwd("~/Dropbox/Sarah_Work/Manuscripts/2016_climate_waterqual/Data/SummaryforShuai")
 write.csv(limno.all.climate.palmer, "ClimateCompiled_1.054_updated_Dec2016_summer.csv")
+
+
+
