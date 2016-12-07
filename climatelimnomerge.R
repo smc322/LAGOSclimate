@@ -14,8 +14,8 @@ hu12.tmean.annual<-read.csv("hu12_tmean_annual.csv", header=T)
 hu12.tmin.annual<-read.csv("hu12_tmin_annual.csv", header=T)
 hu12.tmax.annual<-read.csv("hu12_tmax_annual.csv", header=T)
 hu12.ppt.annual<-read.csv("hu12_ppt_annual.csv", header=T)
-hu12.tmean.season<-read.csv("hu12_tmean_seasonal_dec2016.csv", header=T)
-hu12.ppt.season<-read.csv("hu12_ppt_seasonal_dec2016.csv", header=T)
+hu12.tmean.season<-read.csv("hu12_tmean_seasonal_updated.csv", header=T)
+hu12.ppt.season<-read.csv("hu12_ppt_seasonal_updated.csv", header=T)
 
 
 #separate out relevant columns and merge, add a second year column for x+1 that can be merged with the other year info to get previous years climate data with limno data (this seems like cheating but I was too lazy to figure out how to tell it to add each variable for year x-1 and this should work) Will just need to create a duplicate year column in the limno dataset that's called the same thing as the adjusted one here.
@@ -49,6 +49,7 @@ phdi<-read.csv("phdi_with_seasonal.csv", header=T)
 #pull out seasonal data only, re-name
 phdi.seasons<-phdi[,c(16, 18:22)]
 names(phdi.seasons)<-c("year", "lagoslakeid", "palmer.winter", "palmer.spring", "palmer.summer", "palmer.fall")
+phdi.seasons$yrx1<-phdi.seasons$year+1
 
 #wait to merge phdi into limno data later because it is calculated by lagoslakeid
 
@@ -74,14 +75,21 @@ climate.all<-merge(climate.enso, annual.nao, by="year")
 #### BELOW STILL NEEDS TO BE MODIFIED FOR UPDATED PALMER DATA... want to add same summer as data, spring and winter of same year, fall of previous year.  need to check column nos and stuff to get it right.  do this after the new climate data are merged correctly.
 head(lakes.limno)
 lakes.limno$yrx1<-lakes.limno$year
-climate.yearx<-climate.all[,c(2:11,16:21,23:30,35:38,41:44 )]
-climate.yearx1<-climate.all[,c(3, 12:18, 22,31:35,39:44)]
-names(climate.yearx1)<-c("hu12_zoneid", "September.tmean.x1","October.tmean.x1", "November.tmean.x1", "December.tmean.x1", "tmean.annual.x1", "tmax.annual.x1", "tmin.annual.x1", "tmean.fall.x1", "September.ppt.x1", "October.ppt.x1", "November.ppt.x1", "December.ppt.x1", "precip.annual.x1", "ppt.fall.x1", "yrx1", "enso.espi.x1", "nao.index.x1", "PDSI.value.x1", "PDSI.anomaly.x1")
+climate.yearx<-climate.all[,c(1:10,15:20,22:29,34:37,40:41)]
+climate.yearx1<-climate.all[,c(2, 11:17, 21,30:34,38:41)]
+names(climate.yearx1)<-c("hu12_zoneid", "September.tmean.x1","October.tmean.x1", "November.tmean.x1", "December.tmean.x1", "tmean.annual.x1", "tmax.annual.x1", "tmin.annual.x1", "tmean.fall.x1", "September.ppt.x1", "October.ppt.x1", "November.ppt.x1", "December.ppt.x1", "precip.annual.x1", "ppt.fall.x1", "yrx1", "enso.espi.x1", "nao.index.x1")
 
 limno.climatex<-merge(lakes.limno, climate.yearx, by=c("hu12_zoneid", "year"), all.x=TRUE, all.y=FALSE)
 limno.allclimate<-merge(limno.climatex, climate.yearx1, by=c("hu12_zoneid", "yrx1"), all.x=TRUE, all.y=FALSE)
-limno.allclimate$yrx1=NULL
+
+palmer.yearx<-phdi.seasons[,c(1:5)]
+palmer.yearx1<-phdi.seasons[,c(2,6:7)]
+names(palmer.yearx1)<-c("lagoslakeid", "palmer.fall.x1", "yrx1")
+
+limno.all.climate.palmerx<-merge(limno.allclimate, palmer.yearx, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=FALSE)
+limno.all.climate.palmer<-merge(limno.all.climate.palmerx, palmer.yearx1, by=c("lagoslakeid", "yrx1"), all.x=TRUE, all.y=FALSE)
+limno.all.climate.palmer$yrx1=NULL
 
 
 setwd("~/Dropbox/Sarah_Work/Manuscripts/2016_climate_waterqual/Data/SummaryforShuai")
-write.csv(limno.allclimate, "ClimateCompiled_1.054_initialclim_Oct2016.csv")
+write.csv(limno.all.climate.palmer, "ClimateCompiled_1.054_updated_Dec2016_summer.csv")
