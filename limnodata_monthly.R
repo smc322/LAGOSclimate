@@ -82,7 +82,7 @@ secchi.aug.current = secchi.aug[which(secchi.aug$sampleyear %in% c(1980:2011)), 
 tp.data.june = data.june.current[!is.na(data.june.current$tp),]
 annual.tp.june = aggregate(tp.data.june[,c("tp")], by=list(tp.data.june$lagoslakeid, tp.data.june$sampleyear), FUN="median")
 names(annual.tp.june)<-c("lagoslakeid", "year", "june.tp")
-annual.tp.june = annual.tp[order(annual.tp$lagoslakeid, annual.tp$year),]
+annual.tp.june = annual.tp.june[order(annual.tp.june$lagoslakeid, annual.tp.june$year),]
 
 chla.data.june = data.june.current[!is.na(data.june.current$chla),]
 annual.chla.june = aggregate(chla.data.june[,c("chla")], by=list(chla.data.june$lagoslakeid, chla.data.june$sampleyear), FUN="median")
