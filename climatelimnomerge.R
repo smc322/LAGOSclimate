@@ -74,7 +74,6 @@ names(annual.nao)<-c("year", "nao.index")
 climate.all<-merge(climate.enso, annual.nao, by="year")
 
 #add in limno data and palmer data
-#### BELOW STILL NEEDS TO BE MODIFIED FOR UPDATED PALMER DATA... want to add same summer as data, spring and winter of same year, fall of previous year.  need to check column nos and stuff to get it right.  do this after the new climate data are merged correctly.
 head(lakes.limno)
 lakes.limno$yrx1<-lakes.limno$year
 climate.yearx<-climate.all[,c(1:10,15:20,22:29,34:37,40:41)]
@@ -97,4 +96,31 @@ setwd("~/Dropbox/Sarah_Work/Manuscripts/2016_climate_waterqual/Data/SummaryforSh
 write.csv(limno.all.climate.palmer, "ClimateCompiled_1.054_updated_Dec2016_summer.csv")
 
 
+#merge climate data with June, July and Aug data to make three additional files for Shuai for separate monthly analyses
+lakes.limno.june$yrx1<-lakes.limno.june$year
+lakes.limno.july$yrx1<-lakes.limno.july$year
+lakes.limno.aug$yrx1<-lakes.limno.aug$year
 
+limno.june.climatex<-merge(lakes.limno.june, climate.yearx, by=c("hu12_zoneid", "year"), all.x=TRUE, all.y=FALSE)
+limno.june.allclimate<-merge(limno.june.climatex, climate.yearx1, by=c("hu12_zoneid", "yrx1"), all.x=TRUE, all.y=FALSE)
+limno.june.all.climate.palmerx<-merge(limno.june.allclimate, palmer.yearx, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=FALSE)
+limno.june.all.climate.palmer<-merge(limno.june.all.climate.palmerx, palmer.yearx1, by=c("lagoslakeid", "yrx1"), all.x=TRUE, all.y=FALSE)
+limno.june.all.climate.palmer$yrx1=NULL
+
+write.csv(limno.june.all.climate.palmer, "ClimateCompiled_1.054_updated_Dec2016_june.csv")
+
+limno.july.climatex<-merge(lakes.limno.july, climate.yearx, by=c("hu12_zoneid", "year"), all.x=TRUE, all.y=FALSE)
+limno.july.allclimate<-merge(limno.july.climatex, climate.yearx1, by=c("hu12_zoneid", "yrx1"), all.x=TRUE, all.y=FALSE)
+limno.july.all.climate.palmerx<-merge(limno.july.allclimate, palmer.yearx, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=FALSE)
+limno.july.all.climate.palmer<-merge(limno.july.all.climate.palmerx, palmer.yearx1, by=c("lagoslakeid", "yrx1"), all.x=TRUE, all.y=FALSE)
+limno.july.all.climate.palmer$yrx1=NULL
+
+write.csv(limno.july.all.climate.palmer, "ClimateCompiled_1.054_updated_Dec2016_july.csv")
+
+limno.aug.climatex<-merge(lakes.limno.aug, climate.yearx, by=c("hu12_zoneid", "year"), all.x=TRUE, all.y=FALSE)
+limno.aug.allclimate<-merge(limno.aug.climatex, climate.yearx1, by=c("hu12_zoneid", "yrx1"), all.x=TRUE, all.y=FALSE)
+limno.aug.all.climate.palmerx<-merge(limno.aug.allclimate, palmer.yearx, by=c("lagoslakeid", "year"), all.x=TRUE, all.y=FALSE)
+limno.aug.all.climate.palmer<-merge(limno.aug.all.climate.palmerx, palmer.yearx1, by=c("lagoslakeid", "yrx1"), all.x=TRUE, all.y=FALSE)
+limno.aug.all.climate.palmer$yrx1=NULL
+
+write.csv(limno.aug.all.climate.palmer, "ClimateCompiled_1.054_updated_Dec2016_august.csv")
