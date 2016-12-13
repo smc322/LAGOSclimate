@@ -124,3 +124,6 @@ limno.aug.all.climate.palmer<-merge(limno.aug.all.climate.palmerx, palmer.yearx1
 limno.aug.all.climate.palmer$yrx1=NULL
 
 write.csv(limno.aug.all.climate.palmer, "ClimateCompiled_1.054_updated_Dec2016_august.csv")
+
+
+##THERE ARE 170 ROWS OF NAS FOR THE OUT OF HU12 LAKES, NEED TO ADD CODE TO DELETE THESE FOR NEXT TIME ;)
