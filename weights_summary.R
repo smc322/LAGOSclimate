@@ -257,3 +257,17 @@ points(decx1.ppt.subset.n$Lon, decx1.ppt.subset.n$Lat, pch=19, col="blue", cex=0
 points(june.temp.subset.n$Lon, june.temp.subset.n$Lat, pch=19, col="blue", cex=0.5)
 points(may.temp.subset.n$Lon, may.temp.subset.n$Lat, pch=19, col="blue", cex=0.5)
 points(may.ppt.subset.n$Lon, may.ppt.subset.n$Lat, pch=19, col="blue", cex=0.5)
+
+
+
+#add an r2 figure so everyone can see diff btwn our method and global model. goes chl-secchi-tp-tn, each global then ours
+r2.vals<-c(.133, .397, .280, .739, .114, .401, .156, .755)
+par(xpd=NA, mar=c(6,6,2,1))
+barplot(r2.vals, names=c("GL", "OM", "GL", "OM", "GL", "OM","GL", "OM"), ylim=c(0, .8), col=c("grey40", "grey40", "darkorange3", "darkorange3", "palegreen4", "palegreen4", "steelblue4", "steelblue4"), cex.names=1.4, space=c(.2, .2, 1, .2, 1, .2, 1, .2), axes=F)
+axis(2, col.axis="black", lwd.ticks=2, lwd=2, cex.axis=1.4)
+segments(-.3, 0, 12.4, 0, lwd=2)
+text(-1.5, .4, expression(paste("R"^"2")), cex=2, srt=90)
+text(1.4, -.1, "Chlorophyll", cex=1.5, font=2)
+text(4.5, -.1, "Secchi", cex=1.5, font=2)
+text(7.75, -.1, "TP", cex=1.5, font=2)
+text(11, -.1, "TN", cex=1.5, font=2)
