@@ -8,9 +8,11 @@
 
 #for palmer data, need to merge separately by lagoslakeid, added that for updated data in December 2016 ater nick sent improved palmer data that are calculated by lake.
 
-setwd("~/Dropbox/Sarah_Work/Manuscripts/2016_climate_waterqual/Data/Annual_monthly_calculated")
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/Data/Annual_monthly_calculated")
 
 #updated the seasonal ones Dec 5th-6th - data should be same but fixed technical problem with code that was identified when modifying it for palmer data.
+
+#updated with new limno 1.087.1 data Feb 10th - added a few hundred lakes per limno variable.
 
 hu12.tmean.annual<-read.csv("hu12_tmean_annual.csv", header=T)
 hu12.tmin.annual<-read.csv("hu12_tmin_annual.csv", header=T)
@@ -55,7 +57,7 @@ phdi.seasons$yrx1<-phdi.seasons$year+1
 
 #wait to merge phdi into limno data later because it is calculated by lagoslakeid
 
-setwd("~/Dropbox/Sarah_Work/Manuscripts/2016_climate_waterqual/Data/Climate_raw")
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/Data/Climate_raw")
 
 nao<-read.csv("NAO.csv", header=T)
 enso<-read.csv("ENSO_INDEX.csv", header=T)
@@ -92,10 +94,10 @@ limno.all.climate.palmer<-merge(limno.all.climate.palmerx, palmer.yearx1, by=c("
 limno.all.climate.palmer$yrx1=NULL
 
 
-setwd("~/Dropbox/Sarah_Work/Manuscripts/2016_climate_waterqual/Data/SummaryforShuai")
-write.csv(limno.all.climate.palmer, "ClimateCompiled_1.054_updated_Dec2016_summer.csv")
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/Data/SummaryforShuai/updated_feb2017")
+write.csv(limno.all.climate.palmer, "ClimateCompiled_1.087_updated_Feb2017_summer.csv")
 
-
+##did not update monthly data with 1.087 because no plans to use it in future analysis
 #merge climate data with June, July and Aug data to make three additional files for Shuai for separate monthly analyses
 lakes.limno.june$yrx1<-lakes.limno.june$year
 lakes.limno.july$yrx1<-lakes.limno.july$year

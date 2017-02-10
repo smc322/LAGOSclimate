@@ -2,8 +2,11 @@
 
 #read LAGOS limno data, lake identifier data, and separate secchi dataset
 
-setwd("/Users/SarahiMac/Dropbox/CSI/CSI-LIMNO_DATA/LAGOSData/Version1.054.2")
-data = read.table("lagos_epi_nutr_10542.txt", 
+#update summer seasonal data to 1.087 for new dataset for shuai (10 feb 2017)  for some reason the "lakes" file equivalent doesn't exist in the 1.087.1 folder so used the 1.087.0 version that should be the same data
+
+
+setwd("/Users/SarahiMac/Dropbox/CSI&CL/CSI_LAGOS-exports/LAGOS-LIMNO/Version1.087.1")
+data = read.table("LAGOSNE_epinutr10871.txt", 
                   header = TRUE, 
                   sep = "\t", 
                   quote = "", 
@@ -11,14 +14,8 @@ data = read.table("lagos_epi_nutr_10542.txt",
                   strip.white = TRUE, 
                   comment.char = "", 
                   colClasses=c(sampledate = "POSIXct"))
-data.lake.specific = read.table("lagos_lakes_10542.txt", 
-                                header = TRUE, 
-                                sep = "\t", 
-                                quote = "", 
-                                dec = ".", 
-                                strip.white = TRUE,
-                                comment.char = "")
-secchi = read.table("lagos_secchi_10542.txt", 
+
+secchi = read.table("LAGOSNE_secchi10871.txt", 
                            header = TRUE, 
                            sep = "\t", 
                            quote = "", 
@@ -26,6 +23,15 @@ secchi = read.table("lagos_secchi_10542.txt",
                            strip.white = TRUE, 
                            comment.char = "", 
                            colClasses=c(sampledate = "POSIXct"))
+
+setwd("/Users/SarahiMac/Dropbox/CSI&CL/CSI_LAGOS-exports/LAGOS-LIMNO/Version1.087.0")
+data.lake.specific = read.table("lagos_lakes_10870.txt", 
+                                header = TRUE, 
+                                sep = "\t", 
+                                quote = "", 
+                                dec = ".", 
+                                strip.white = TRUE,
+                                comment.char = "")
 
 #we are interested in secchi, TP and chla for now.  first separate out limno data and secchi so they only include summer values (june 15-sept 15)
 
