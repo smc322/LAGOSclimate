@@ -5,7 +5,7 @@
 #update summer seasonal data to 1.087 for new dataset for shuai (10 feb 2017)  for some reason the "lakes" file equivalent doesn't exist in the 1.087.1 folder so used the 1.087.0 version that should be the same data
 
 
-setwd("/Users/SarahiMac/Dropbox/CSI&CL/CSI_LAGOS-exports/LAGOS-LIMNO/Version1.087.1")
+setwd("/Users/SarahiMac/Dropbox/CSI&CL/CSI_LAGOS-exports/LAGOS-NE-EDI/LAGOS-NE-LIMNO-EXPORT")
 data = read.table("LAGOSNE_epinutr10871.txt", 
                   header = TRUE, 
                   sep = "\t", 
