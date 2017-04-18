@@ -16,7 +16,7 @@ names(chla.idlist)<-"lagoslakeid"
 
 #read in weights tables for trimming
 
-setwd("~/Dropbox/Sarah_Work/Manuscripts/2016_climate_waterqual/Data/RegressionWeights_Dec2016")
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/Data/RegressionWeights_Dec2016")
 
 n.weights<-read.csv("nweights.csv", header=T)
 n.weights.data<-merge(n.idlist, n.weights, by="lagoslakeid", all.x=T, all.y=F)
@@ -33,3 +33,29 @@ write.csv(secchi.weights.data, "secchiweights_datalakes.csv")
 chla.weights<-read.csv("chlaweights.csv", header=T)
 chla.weights.data<-merge(chla.idlist, chla.weights, by="lagoslakeid", all.x=T, all.y=F)
 write.csv(chla.weights.data, "chlaweights_datalakes.csv")
+
+
+##or updated here for april 2017 data, lambda .003
+
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/Data/RegressionWeights_April2017")
+
+n.weights<-read.csv("TN_lambda3_003.csv", header=T)
+n.weights.data<-merge(n.idlist, n.weights, by="lagoslakeid", all.x=T, all.y=F)
+n.weights.data<-na.omit(n.weights.data)
+write.csv(n.weights.data, "TN_lambda3_003_datalakes.csv")
+
+p.weights<-read.csv("TP_lambda3_003.csv", header=T)
+p.weights.data<-merge(p.idlist, p.weights, by="lagoslakeid", all.x=T, all.y=F)
+p.weights.data<-na.omit(p.weights.data)
+write.csv(p.weights.data, "TP_lambda3_003_datalakes.csv")
+
+secchi.weights<-read.csv("Secchi_lambda3_003.csv", header=T)
+secchi.weights.data<-merge(secchi.idlist, secchi.weights, by="lagoslakeid", all.x=T, all.y=F)
+secchi.weights.data<-na.omit(secchi.weights.data)
+write.csv(secchi.weights.data, "Secchi_lambda3_003_datalakes.csv")
+
+chla.weights<-read.csv("Chla_lambda3_003.csv", header=T)
+chla.weights.data<-merge(chla.idlist, chla.weights, by="lagoslakeid", all.x=T, all.y=F)
+chla.weights.data<-na.omit(chla.weights.data)
+write.csv(chla.weights.data, "Chla_lambda3_003_datalakes.csv")
+
