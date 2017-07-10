@@ -1,4 +1,7 @@
-setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/Data/RegressionWeights_Dec2016")
+#originally did this with Dec 2016 data, updated here in July 2017 for April 2017 data from Shuai
+#setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/Data/RegressionWeights_Dec2016")
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/Data/RegressionWeights_April2017")
+
 
 n.weights<-read.csv("nweights.csv", header=T)
 p.weights<-read.csv("pweights.csv", header=T)
@@ -66,8 +69,7 @@ names(SecondLargest.chla)<-"SecondLargest"
 names(ThirdLargest.chla)<-"ThirdLargest"
 
 coef.ranks.chla<-data.frame(Largest.chla=Largest.chla$Largest,Second.chla = SecondLargest.chla$SecondLargest,Third.chla=ThirdLargest.chla$ThirdLargest)
-
-
+summary(coef.ranks.chla)
 
 ##create summary of counts for everything
 library(plyr)
@@ -124,55 +126,112 @@ chla.secchi.p.n.123$sum.n.123=rowSums(chla.secchi.p.n.123[,c(14:16)], na.rm=TRUE
 all.coef.summary<-chla.secchi.p.n.123
 all.coef.summary.sums<-all.coef.summary[,c(1, 5, 9, 13, 17)]
 
-setwd("/Users/SarahiMac/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/ResultsSummaryStats")
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/ResultsSummaryStats")
 
-write.csv(all.coef.summary, "Coefficient_Counts_Sums.csv")
-write.csv(all.coef.summary.sums, "Coefficient_Counts_Sums_Top3Combined.csv")
+write.csv(all.coef.summary, "Coefficient_Counts_Sums_July2017.csv")
+write.csv(all.coef.summary.sums, "Coefficient_Counts_Sums_Top3Combined_July2017.csv")
 
 ##pick out anything with sums over 1,000 for the top 3 combined, make stacked bar
+###leave this here for the Dec 2016 data, start new version for July 2017 update below!
 
 ## names all with colors for each
-December.ppt.x1.col= rgb(103,0,31, max=255)
-January.ppt.col= rgb(178,24,43, max=255)
-November.ppt.x1.col= rgb(214,96,77, max=255)
-ppt.winter.col= rgb(244,165,130, max=255)
+#December.ppt.x1.col= rgb(103,0,31, max=255)
+#January.ppt.col= rgb(178,24,43, max=255)
+#November.ppt.x1.col= rgb(214,96,77, max=255)
+#ppt.winter.col= rgb(244,165,130, max=255)
   
+#precip.annual.x1.col= rgb(253,219,199, max=255)
+
+#May.ppt.col= rgb(247,247,247, max=255)
+#palmer.spring.col= rgb(209,229,240, max=255)
+
+#June.tmean.col= rgb(146,197,222, max=255)
+#May.tmean.col= rgb(67,147,195, max=255)
+
+#tmean.annual.x1.col= rgb(33,102,172, max=255)
+#tmin.annual.x1.col= rgb(5,48,97, max=255)
+
+#Other.col= "grey80"
+
+
+#vars<-c("December.ppt.x1", "January.ppt", "November.ppt.x1", "ppt.winter", "precip.annual.x1", "May.ppt", "palmer.spring", "June.tmean", "May.tmean", "tmean.annual.x1", "tmin.annual.x1", "Other")
+
+#var.coef.vals.chla<-c(0, 7382, 1425,7368, 0, 0, 0, 6766, 0, 0, 0, (35604-7382-6766-1425-7368))
+
+#var.coef.vals.secchi<-c(0, 7650, 0, 8567, 8671, 0, 1267, 0, 0, 1651, 2078, (35604-7650-1267-8567-8671-1651-2078))
+
+#var.coef.vals.p<-c(3742, 7280, 0, 8361, 1391, 0, 0, 4199, 0, 0, 0, (35604-3742-7280-8361-1391-4199))
+
+#var.coef.vals.n<-c(7649, 5703, 0, 8576, 0, 2041, 0, 3088, 1005, 0, 0, (35604-7649-5703-8576-2041-3088-1005))
+
+
+#coefs.matrix=cbind(var.coef.vals.chla, var.coef.vals.secchi, var.coef.vals.p, var.coef.vals.n)
+#colors.vars<-c(December.ppt.x1.col, January.ppt.col, November.ppt.x1.col, ppt.winter.col, precip.annual.x1.col, May.ppt.col, palmer.spring.col, June.tmean.col, May.tmean.col, tmean.annual.x1.col, tmin.annual.x1.col, Other.col)
+#par(xpd=NA)
+#barplot(coefs.matrix, col=colors.vars, names=c("Chlorophyll", "Secchi", "TP", "TN"), ylim=c(0, 36000), xlim=c(0, 7), cex.names=1.5, cex.axis=1.3)
+#legend(5.2, 32000, legend=c("December", "January", "November", "Winter", "Annual"), fill=c(December.ppt.x1.col, January.ppt.col, November.ppt.x1.col, ppt.winter.col, precip.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Prev. Winter/Year Precip")
+#legend(5.2, 24000, legend=c("May PPT", "Spring Palmer"), fill=c(May.ppt.col, palmer.spring.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Spring Precip/Palmer")
+#legend(5.2, 19000, legend=c("May", "June"), fill=c(May.tmean.col, June.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Early Summer Temp")
+#legend(5.2, 14000, legend=c("Temp Mean", "Temp Min"), fill=c(tmean.annual.x1.col, tmin.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Prev. Year Temperature")
+#legend(5.2, 7000, legend=c("Other"), fill=c(Other.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
+
+#July 2017 version!
+## names all with colors for each
+##variables with at least 1000?  That's fewer than before (as we'd hope!)
+##chla: June.tmean, May.tmean, November.ppt.x1, ppt.winter, precip.annual.x1, tmean.summer
+##secchi: January.ppt, June.tmean, May.tmean, November.ppt.x1, ppt.winter, precip.annual.x1
+##tp: June.tmean, May.tmean, November.ppt.x1, ppt.winter, precip.annual.x1, tmean.summer
+##tn: January.ppt, June.tmean, May.tmean, November.ppt.x1, ppt.winter, precip.annual.x1, tmean.summer
+
+#December.ppt.x1.col= rgb(103,0,31, max=255)
+November.ppt.x1.col= rgb(178,24,43, max=255)
+January.ppt.col= rgb(214,96,77, max=255)
+ppt.winter.col= rgb(244,165,130, max=255)
 precip.annual.x1.col= rgb(253,219,199, max=255)
 
-May.ppt.col= rgb(247,247,247, max=255)
-palmer.spring.col= rgb(209,229,240, max=255)
+#May.ppt.col= rgb(247,247,247, max=255)
+#palmer.spring.col= rgb(209,229,240, max=255)
 
 June.tmean.col= rgb(146,197,222, max=255)
 May.tmean.col= rgb(67,147,195, max=255)
+summer.tmean.col= rgb(33,102,172, max=255)
 
-tmean.annual.x1.col= rgb(33,102,172, max=255)
-tmin.annual.x1.col= rgb(5,48,97, max=255)
+#tmean.annual.x1.col= rgb(33,102,172, max=255)
+#tmin.annual.x1.col= rgb(5,48,97, max=255)
 
 Other.col= "grey80"
 
 
-vars<-c("December.ppt.x1", "January.ppt", "November.ppt.x1", "ppt.winter", "precip.annual.x1", "May.ppt", "palmer.spring", "June.tmean", "May.tmean", "tmean.annual.x1", "tmin.annual.x1", "Other")
+vars<-c("November.ppt.x1", "January.ppt", "ppt.winter", "precip.annual.x1", "May.tmean", "June.tmean", "tmean.summer", "Other")
 
-var.coef.vals.chla<-c(0, 7382, 1425,7368, 0, 0, 0, 6766, 0, 0, 0, (35604-7382-6766-1425-7368))
+var.coef.vals.chla<-c(3455, 0, 4371, 3955, 5307, 5690, 3781, (35646-3455-4371-3955-5307-5690-3781))
 
-var.coef.vals.secchi<-c(0, 7650, 0, 8567, 8671, 0, 1267, 0, 0, 1651, 2078, (35604-7650-1267-8567-8671-1651-2078))
+var.coef.vals.secchi<-c(3529, 4031, 6858, 3508, 1971, 4127, 0, (35646-3529-4031-6858-3508-1971-4127))
 
-var.coef.vals.p<-c(3742, 7280, 0, 8361, 1391, 0, 0, 4199, 0, 0, 0, (35604-3742-7280-8361-1391-4199))
+var.coef.vals.p<-c(3226, 0, 6653, 3861, 5880, 6262, 2602, (35646-3226-6653-3861-5880-6262-2602))
 
-var.coef.vals.n<-c(7649, 5703, 0, 8576, 0, 2041, 0, 3088, 1005, 0, 0, (35604-7649-5703-8576-2041-3088-1005))
+var.coef.vals.n<-c(3336, 1587, 8332, 3974, 6872, 7198, 1243, (35646-3336-1587-8332-3974-6872-7198-1243))
 
 
 coefs.matrix=cbind(var.coef.vals.chla, var.coef.vals.secchi, var.coef.vals.p, var.coef.vals.n)
-colors.vars<-c(December.ppt.x1.col, January.ppt.col, November.ppt.x1.col, ppt.winter.col, precip.annual.x1.col, May.ppt.col, palmer.spring.col, June.tmean.col, May.tmean.col, tmean.annual.x1.col, tmin.annual.x1.col, Other.col)
+colors.vars<-c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annual.x1.col, May.tmean.col, June.tmean.col, summer.tmean.col, Other.col)
 par(xpd=NA)
-barplot(coefs.matrix, col=colors.vars, names=c("Chlorophyll", "Secchi", "TP", "TN"), ylim=c(0, 36000), xlim=c(0, 7), cex.names=1.5, cex.axis=1.3)
-legend(5.2, 32000, legend=c("December", "January", "November", "Winter", "Annual"), fill=c(December.ppt.x1.col, January.ppt.col, November.ppt.x1.col, ppt.winter.col, precip.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Prev. Winter/Year Precip")
-legend(5.2, 24000, legend=c("May PPT", "Spring Palmer"), fill=c(May.ppt.col, palmer.spring.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Spring Precip/Palmer")
-legend(5.2, 19000, legend=c("May", "June"), fill=c(May.tmean.col, June.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Early Summer Temp")
-legend(5.2, 14000, legend=c("Temp Mean", "Temp Min"), fill=c(tmean.annual.x1.col, tmin.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Prev. Year Temperature")
-legend(5.2, 7000, legend=c("Other"), fill=c(Other.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
+barplot(coefs.matrix, col=colors.vars, names=c("Chla", "Secchi", "TP", "TN"), ylim=c(0, 36000), xlim=c(0, 7), cex.names=1.5, cex.axis=1.3)
+legend(5.2, 32000, legend=c("November PPT", "January PPT", "Winter PPT", "PrevYear PPT"), fill=c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
+legend(5.2, 17000, legend=c("May Tmean", "June Tmean", "Summer Tmean"), fill=c(May.tmean.col, June.tmean.col, summer.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
+#legend(5.2, 19000, legend=c("May", "June"), fill=c(May.tmean.col, June.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Early Summer Temp")
+#legend(5.2, 14000, legend=c("Temp Mean", "Temp Min"), fill=c(tmean.annual.x1.col, tmin.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Prev. Year Temperature")
+legend(5.2, 5000, legend=c("Other"), fill=c(Other.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
+
+
+
 
 ##create maps - color top preds that made it into those bar graphs and map over space
+##zillion maps below are not updated for July 2017 analysis, still Dec 2016 data.  I don't think we 
+#particularly need them... hopefully we'll be able to map clusters if that works.  but might want to take
+#a look to visualize some stuff if the clustering doesn't work or if we happen to want to focus on a particular
+#predictor variable?  so leaving this here for now just in case
+
 secchi.with.ranks<-cbind(secchi.weights, coef.ranks.secchi)
 chla.with.ranks<-cbind(chla.weights, coef.ranks.chla)
 p.with.ranks<-cbind(p.weights, coef.ranks.p)
