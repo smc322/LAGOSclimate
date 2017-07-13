@@ -218,10 +218,10 @@ colors.vars<-c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annu
 par(xpd=NA)
 barplot(coefs.matrix, col=colors.vars, names=c("Chla", "Secchi", "TP", "TN"), ylim=c(0, 36000), xlim=c(0, 7), cex.names=1.5, cex.axis=1.3)
 legend(5.2, 32000, legend=c("November PPT", "January PPT", "Winter PPT", "PrevYear PPT"), fill=c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
-legend(5.2, 17000, legend=c("May Tmean", "June Tmean", "Summer Tmean"), fill=c(May.tmean.col, June.tmean.col, summer.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
+legend(5.2, 24000, legend=c("May Tmean", "June Tmean", "Summer Tmean"), fill=c(May.tmean.col, June.tmean.col, summer.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
 #legend(5.2, 19000, legend=c("May", "June"), fill=c(May.tmean.col, June.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Early Summer Temp")
 #legend(5.2, 14000, legend=c("Temp Mean", "Temp Min"), fill=c(tmean.annual.x1.col, tmin.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Prev. Year Temperature")
-legend(5.2, 5000, legend=c("Other"), fill=c(Other.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
+legend(5.2, 18000, legend=c("Other"), fill=c(Other.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
 
 
 
