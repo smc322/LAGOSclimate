@@ -319,8 +319,8 @@ points(may.ppt.subset.n$Lon, may.ppt.subset.n$Lat, pch=19, col="blue", cex=0.5)
 
 
 
-#add an r2 figure so everyone can see diff btwn our method and global model. goes chl-secchi-tp-tn, each global then ours
-r2.vals<-c(.133, .397, .280, .739, .114, .401, .156, .755)
+#add an r2 figure so everyone can see diff btwn our method and global model. goes chl-secchi-tp-tn, each global then ours - updated with lambda 3 .03 data in Aug 2017
+r2.vals<-c(.130, .338, .283, .673, .126, .421, .155, .674)
 par(xpd=NA, mar=c(6,6,2,1))
 barplot(r2.vals, names=c("GL", "OM", "GL", "OM", "GL", "OM","GL", "OM"), ylim=c(0, .8), col=c("grey40", "grey40", "darkorange3", "darkorange3", "palegreen4", "palegreen4", "steelblue4", "steelblue4"), cex.names=1.4, space=c(.2, .2, 1, .2, 1, .2, 1, .2), axes=F)
 axis(2, col.axis="black", lwd.ticks=2, lwd=2, cex.axis=1.4)
