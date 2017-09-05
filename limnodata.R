@@ -6,23 +6,21 @@
 
 
 setwd("/Users/SarahiMac/Dropbox/CSI&CL/CSI_LAGOS-exports/LAGOS-NE-EDI/LAGOS-NE-LIMNO-EXPORT")
-data = read.table("LAGOSNE_epinutr10871.txt", 
+data = read.table("LAGOSNE_epinutr10871.csv", 
                   header = TRUE, 
-                  sep = "\t", 
+                  sep = ",", 
                   quote = "", 
                   dec = ".", 
                   strip.white = TRUE, 
-                  comment.char = "", 
-                  colClasses=c(sampledate = "POSIXct"))
+                  comment.char = "" )
 
-secchi = read.table("LAGOSNE_secchi10871.txt", 
+secchi = read.table("LAGOSNE_secchi10871.csv", 
                            header = TRUE, 
-                           sep = "\t", 
+                           sep = ",", 
                            quote = "", 
                            dec = ".", 
                            strip.white = TRUE, 
-                           comment.char = "", 
-                           colClasses=c(sampledate = "POSIXct"))
+                           comment.char = "" )
 
 setwd("/Users/SarahiMac/Dropbox/CSI&CL/CSI_LAGOS-exports/LAGOS-LIMNO/Version1.087.0")
 data.lake.specific = read.table("lagos_lakes_10870.txt", 
