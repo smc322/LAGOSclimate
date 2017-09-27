@@ -17,3 +17,13 @@ saveRDS(hu12.tmax.annual, file="Data/hu12.tmax.annual.rds")
 saveRDS(hu12.ppt.annual, file="Data/hu12.ppt.annual.rds")
 saveRDS(hu12.tmean.season, file="Data/hu12.tmean.season.rds")
 saveRDS(hu12.ppt.season, file="Data/hu12.ppt.season.rds")
+
+
+#limno data - run script to get lakes.limno
+
+saveRDS(lakes.limno, file="Data/LimnoData.rds")
+
+
+#combined file I sent to SY for MTL analysis from climatelimnomerge.R
+
+saveRDS(limno.all.climate.palmer, file="Data/LimnoandClimateforMTLanalysis.rds")
