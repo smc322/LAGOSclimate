@@ -27,3 +27,11 @@ saveRDS(lakes.limno, file="Data/LimnoData.rds")
 #combined file I sent to SY for MTL analysis from climatelimnomerge.R
 
 saveRDS(limno.all.climate.palmer, file="Data/LimnoandClimateforMTLanalysis.rds")
+
+#and original palmer, nao and enso from climatelimnomerge.R
+
+phdi.seasons.nona<-na.omit(phdi.seasons)
+saveRDS(phdi.seasons.nona, file="Data/PHDI.rds")
+
+saveRDS(annual.enso, file="Data/ENSO.rds")
+saveRDS(annual.nao, file="Data/NAO.rds")
