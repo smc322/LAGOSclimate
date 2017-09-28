@@ -35,3 +35,11 @@ saveRDS(phdi.seasons.nona, file="Data/PHDI.rds")
 
 saveRDS(annual.enso, file="Data/ENSO.rds")
 saveRDS(annual.nao, file="Data/NAO.rds")
+
+
+#lambda 3 = .03 weights for April 2017 results for each of four response variables. File info in weight summary
+
+saveRDS(n.weights, file="Data/n_l3_03.rds")
+saveRDS(p.weights, file="Data/p_l3_03.rds")
+saveRDS(secchi.weights, file="Data/sec_l3_03.rds")
+saveRDS(chla.weights, file="Data/chl_l3_03.rds")
