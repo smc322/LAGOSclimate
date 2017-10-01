@@ -90,7 +90,7 @@ ann_colors = list(
     precipitation = viridis_sample[3],
     temperature = viridis_sample[4]))
 
-pheatmap(dt_lambda, 
+test <- pheatmap(dt_lambda, 
          breaks = round(seq(-0.02, 0.02, 
                             length.out = 7), 3),
          color = rev(RColorBrewer::brewer.pal(6, "RdBu")),
@@ -104,3 +104,8 @@ pheatmap(dt_lambda,
          annotation_colors = ann_colors,
          cellheight = 7, 
          silent = TRUE)
+
+w <- c(0.5, 1, 8, 0.3, 1.3, 1.9)
+blank <- rectGrob(gp = gpar(col = "white"))
+
+grid.arrange(test$gtable$grobs[[2]], test$gtable$grobs[[3]], test$gtable$grobs[[1]], blank, test$gtable$grobs[[6]], test$gtable$grobs[[5]], nrow = 1, widths = w)
