@@ -11,6 +11,7 @@ dt_lambda <- select(dt, -lagoslakeid, -Lat, -Lon)
 # head(dt_lambda)
 row.names(dt_lambda) <- dt$lagoslakeid
 # hist(colMeans(dt_lambda))
+dt_lambda <- t(dt_lambda)
 
 key <- data.frame(rbind(c("tmean", "temperature"),
       c("tmax",  "temperature"),
@@ -21,26 +22,25 @@ key <- data.frame(rbind(c("tmean", "temperature"),
       c("precip","precipitation"), 
       c("palmer","drought")), 
       stringsAsFactors = FALSE)
-
 names(key) <- c("value", "key")
 
-annotation_col <- data.frame(stringr::str_split_fixed(
-  colnames(dt_lambda), "\\.", 2), stringsAsFactors = FALSE)
-names(annotation_col) <- c("prefix", "suffix")
-annotation_col$suffix <- gsub("\\.x1", "", annotation_col$suffix)
+annotation_row <- data.frame(stringr::str_split_fixed(
+  row.names(dt_lambda), "\\.", 2), stringsAsFactors = FALSE)
+names(annotation_row) <- c("prefix", "suffix")
+annotation_row$suffix <- gsub("\\.x1", "", annotation_row$suffix)
 
-annotation_col_intermediate <- dplyr::left_join(
-  annotation_col, 
+annotation_row_intermediate <- dplyr::left_join(
+  annotation_row, 
   key, 
   by = c("suffix" = "value"))
 
-names(annotation_col_intermediate)[3] <- "intermediate"
-annotation_col_intermediate <- dplyr::left_join(
-  annotation_col_intermediate, 
+names(annotation_row_intermediate)[3] <- "intermediate"
+annotation_row_intermediate <- dplyr::left_join(
+  annotation_row_intermediate, 
   key, 
   by = c("prefix" = "value"))
 
-annotation_col$vartype <- apply(annotation_col_intermediate, 
+annotation_row$vartype <- apply(annotation_row_intermediate, 
          1, function(x) {
                           if(!is.na(x["intermediate"])){
                             x["intermediate"]
@@ -48,21 +48,21 @@ annotation_col$vartype <- apply(annotation_col_intermediate,
                             x["key"]}
                         })
   
-annotation_col <- select(annotation_col, -prefix, -suffix)
-row.names(annotation_col) <- names(dt_lambda)
-annotation_col_row_names <- row.names(annotation_col)
+annotation_row <- select(annotation_row, -prefix, -suffix)
+row.names(annotation_row) <- row.names(dt_lambda)
+annotation_row_col_names <- row.names(annotation_row)
 
 # order by vartype
-col_order <- order(annotation_col$vartype, 
+row_order <- order(annotation_row$vartype, 
                    decreasing = TRUE)
-annotation_col <- dplyr::arrange(annotation_col, 
+annotation_row <- dplyr::arrange(annotation_row, 
                                  vartype)
-row.names(annotation_col) <- annotation_col_row_names[rev(col_order)] 
-dt_lambda <- dt_lambda[,rev(col_order)]
+row.names(annotation_row) <- annotation_row_col_names[rev(row_order)] 
+dt_lambda <- dt_lambda[rev(row_order),]
 
-top_labs <- names(colMeans(dt_lambda)[
-  order(abs(colMeans(dt_lambda)), decreasing = TRUE)][1:15])
-labs <- names(dt_lambda)
+top_labs <- names(rowMeans(dt_lambda)[
+  order(abs(rowMeans(dt_lambda)), decreasing = TRUE)][1:15])
+labs <- row.names(dt_lambda)
 labs[!(labs %in% top_labs)] <- ""
 labs <- gsub("tmin", "", labs)
 labs <- gsub("tmax", "", labs)
@@ -96,10 +96,11 @@ pheatmap(dt_lambda,
          color = rev(RColorBrewer::brewer.pal(6, "RdBu")),
          cluster_rows = FALSE,
          cluster_cols = FALSE,
-         show_rownames = FALSE, 
-         labels_col = labs, 
-         labels_row = labels_row,
-         main = "Lambda 3 chla", 
-         annotation_col = annotation_col,
+         show_rownames = TRUE,
+         show_colnames = FALSE,
+         labels_row = labs, 
+         labels_col = labels_row,
+         annotation_row = annotation_row,
          annotation_colors = ann_colors,
-         cellwidth = 7)
+         cellheight = 7, 
+         silent = TRUE)
