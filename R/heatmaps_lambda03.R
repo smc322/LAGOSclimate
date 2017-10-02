@@ -39,18 +39,21 @@ date_key <- rbind(date_key,
                     rank = 1:12 + 4, 
                     time = "monthly", stringsAsFactors = FALSE))
 
-# create row annotations ####
+# create row annotation join ####
 annotation_row <- data.frame(stringr::str_split_fixed(
   row.names(dt_lambda), "\\.", 2), stringsAsFactors = FALSE)
 names(annotation_row) <- c("prefix", "suffix")
 annotation_row$suffix <- gsub("\\.x1", "", annotation_row$suffix)
+
+annotation_row$priorYear <- "current"
+annotation_row$priorYear[grep("x1", row.names(dt_lambda))] <- "prior"
 
 annotation_row_intermediate <- dplyr::left_join(
   annotation_row, 
   key, 
   by = c("suffix" = "value"))
 
-names(annotation_row_intermediate)[3] <- "intermediate"
+names(annotation_row_intermediate)[4] <- "intermediate"
 annotation_row_intermediate <- dplyr::left_join(
   annotation_row_intermediate, 
   key, 
@@ -67,21 +70,23 @@ annotation_row_intermediate <- dplyr::left_join(
   date_key, 
   by = c("prefix" = "period"))
 
+# assign annotation_row ids ####
 annotation_row$varType <- apply(annotation_row_intermediate, 
          1, function(x) {
                           if(!is.na(x["intermediate"])){
                             x["intermediate"]
                           }else{
-                            x["key"]}
+                            x["first_key"]}
                         })
   
 annotation_row$rank <- apply(annotation_row_intermediate, 
                              1, function(x) {
-                               if(!is.na(x["first_key"])){
-                                 x["first_key"]
+                               if(!is.na(x["rank.x"])){
+                                 x["rank.x"]
                                }else{
-                                 x["rank"]}
+                                 x["rank.y"]}
                              })
+
 annotation_row$timePeriod <- apply(annotation_row_intermediate, 
                              1, function(x) {
                                if(!is.na(x["time.x"])){
@@ -98,20 +103,28 @@ annotation_row_col_names <- row.names(annotation_row)
 annotation_row$names <- row.names(annotation_row)
 
 # order by vartype and rank ####
-row_order <- order(annotation_row$varType, 
+row_order <- order(annotation_row$varType,
+                   annotation_row$timePeriod,
+                   annotation_row$priorYear,
                    annotation_row$rank, 
                    annotation_row$names,
-                   decreasing = c(TRUE, FALSE, TRUE))
+                   decreasing = c(TRUE, TRUE, TRUE, FALSE, TRUE))
 annotation_row <- dplyr::arrange(annotation_row, 
-                                 varType, rank, names)
-row.names(annotation_row) <- annotation_row_col_names[rev(row_order)] 
-dt_lambda <- dt_lambda[rev(row_order),]
+                                 desc(varType),
+                                 desc(timePeriod),
+                                 desc(priorYear), 
+                                 rank, 
+                                 desc(names))
+row.names(annotation_row) <- annotation_row_col_names[row_order] 
+dt_lambda <- dt_lambda[row_order,]
+# data.frame(a = row.names(dt_lambda), b = row.names(annotation_row))
 
 # format labels ####
 top_labs <- names(rowMeans(dt_lambda)[
-  order(abs(rowMeans(dt_lambda)), decreasing = TRUE)][1:15])
+  order(abs(rowMeans(dt_lambda)), decreasing = TRUE)][1:6])
 labs <- row.names(dt_lambda)
-# labs[!(labs %in% top_labs)] <- ""
+top_labs <- which(labs %in% top_labs)
+
 labs <- gsub("tmin", "", labs)
 labs <- gsub("tmax", "", labs)
 labs <- gsub("precip", "", labs)
@@ -128,21 +141,24 @@ labs <- R.utils::capitalize(labs)
 labs[which(nchar(labs) >= 6 & labs %in% month.name)] <- substring(
   labs[which(nchar(labs) >= 6 & labs %in% month.name)], 0, 3)
 
-labs[nchar(labs) == 0] <- c(rep("Annual", 2), 
-                            "Max", "Max", 
-                            "Mean", "Mean",
-                            "Min", "Min")
+labs[nchar(labs) == 0] <- c("Min", "Mean",
+                            "Max", "Min",
+                            "Mean", "Max",
+                            "Annual", "Annual")
+
+labs[!(seq_len(length(labs)) %in% top_labs)] <- "" # comment out to show all
 # data.frame(a = row.names(dt_lambda), b = labs)
 
 # assign colors ####
 # pal <- choose_palette()
 var_colors     <- c("#555555", "#989898", "#CACACA", "#E2E2E2")
-time_colors    <- c("#46024E", "#007393", "#00C387", "#FDE333")
+# time_colors    <- c("#46024E", "#007393", "#00C387", "#FDE333")
+time_colors    <- rev(var_colors)
 ann_colors = list(
-  varType    = c(drought       = var_colors[1],
-                 index         = var_colors[2], 
+  varType    = c(temperature   = var_colors[4], 
                  precipitation = var_colors[3],
-                 temperature   = var_colors[4]), 
+                 index         = var_colors[2],
+                 drought       = var_colors[1]), 
   timePeriod = c(interannual =  time_colors[1],
                  annual      =  time_colors[2],
                  seasonal    =  time_colors[3],
@@ -152,7 +168,7 @@ ann_colors = list(
 annotation_row <- dplyr::select(annotation_row, -rank, -names)
 
 # arrange plot ####
-test <- pheatmap(dt_lambda, 
+raw_hmap <- pheatmap(dt_lambda, 
          breaks = round(seq(-0.02, 0.02, 
                             length.out = 7), 3),
          color = rev(RColorBrewer::brewer.pal(6, "RdBu")),
@@ -166,7 +182,24 @@ test <- pheatmap(dt_lambda,
          cellheight = 7, 
          silent = TRUE)
 
-w <- c(0.9, 1, 8, 0.3, 1.3, 1.9)
+w <- c(1.2, 1, 8, 0.3, 1.3, 1.9)
 blank <- rectGrob(gp = gpar(col = "white"))
 
-grid.arrange(test$gtable$grobs[[2]], test$gtable$grobs[[3]], test$gtable$grobs[[1]], blank, test$gtable$grobs[[6]], test$gtable$grobs[[5]], nrow = 1, widths = w, heights = rep(1, 1))
+hmap <- arrangeGrob(raw_hmap$gtable$grobs[[2]], 
+                    raw_hmap$gtable$grobs[[3]], 
+                    raw_hmap$gtable$grobs[[1]],
+                    blank, 
+                    raw_hmap$gtable$grobs[[6]], 
+                    raw_hmap$gtable$grobs[[5]], widths = w)
+bottom_panel <- arrangeGrob(blank, 
+                            raw_hmap$gtable$grobs[[4]], 
+                            blank, 
+                            blank, 
+                            blank, 
+                            blank, 
+                            widths = w)
+
+grid.arrange(hmap, bottom_panel, 
+             nrow = 2, heights = c(1, 0.2), top = " ")
+
+# gtable_show_layout(hmap)
