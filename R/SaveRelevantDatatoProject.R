@@ -43,3 +43,29 @@ saveRDS(n.weights, file="Data/n_l3_03.rds")
 saveRDS(p.weights, file="Data/p_l3_03.rds")
 saveRDS(secchi.weights, file="Data/sec_l3_03.rds")
 saveRDS(chla.weights, file="Data/chl_l3_03.rds")
+
+###RMSE data for maps
+
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/Data/RMSE_April2017")
+
+n.l3.003<-read.csv("TN_lambda3_003.csv", header=T)
+p.l3.003<-read.csv("TP_lambda3_003.csv", header=T)
+s.l3.003<-read.csv("Secchi_lambda3_003.csv", header=T)
+c.l3.003<-read.csv("Chla_lambda3_003.csv", header=T)
+
+n.l3.005<-read.csv("TN_lambda3_005.csv", header=T)
+p.l3.005<-read.csv("TP_lambda3_005.csv", header=T)
+s.l3.005<-read.csv("Secchi_lambda3_005.csv", header=T)
+c.l3.005<-read.csv("Chla_lambda3_005.csv", header=T)
+
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/LAGOSclimate")
+
+saveRDS(n.l3.003, file="Data/n_l3_03_rmse.rds")
+saveRDS(p.l3.003, file="Data/p_l3_03_rmse.rds")
+saveRDS(s.l3.003, file="Data/sec_l3_03_rmse.rds")
+saveRDS(c.l3.003, file="Data/chl_l3_03_rmse.rds")
+
+saveRDS(n.l3.005, file="Data/n_l3_05_rmse.rds")
+saveRDS(p.l3.005, file="Data/p_l3_05_rmse.rds")
+saveRDS(s.l3.005, file="Data/sec_l3_05_rmse.rds")
+saveRDS(c.l3.005, file="Data/chl_l3_05_rmse.rds")
