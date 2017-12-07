@@ -184,17 +184,27 @@ write.csv(all.coef.summary.sums, "Coefficient_Counts_Sums_Top3Combined_July2017.
 ##tn: January.ppt, June.tmean, May.tmean, November.ppt.x1, ppt.winter, precip.annual.x1, tmean.summer
 
 #December.ppt.x1.col= rgb(103,0,31, max=255)
-November.ppt.x1.col= rgb(178,24,43, max=255)
-January.ppt.col= rgb(214,96,77, max=255)
-ppt.winter.col= rgb(244,165,130, max=255)
-precip.annual.x1.col= rgb(253,219,199, max=255)
+#November.ppt.x1.col= rgb(178,24,43, max=255)
+#January.ppt.col= rgb(214,96,77, max=255)
+#ppt.winter.col= rgb(244,165,130, max=255)
+#precip.annual.x1.col= rgb(253,219,199, max=255)
+
+November.ppt.x1.col= rgb(33,102,172, max=255)
+January.ppt.col= rgb(67,147,195, max=255)
+ppt.winter.col= rgb(146,197,222, max=255)
+precip.annual.x1.col= rgb(199, 231,249, max=255)
 
 #May.ppt.col= rgb(247,247,247, max=255)
 #palmer.spring.col= rgb(209,229,240, max=255)
 
-June.tmean.col= rgb(146,197,222, max=255)
-May.tmean.col= rgb(67,147,195, max=255)
-summer.tmean.col= rgb(33,102,172, max=255)
+#June.tmean.col= rgb(146,197,222, max=255)
+#May.tmean.col= rgb(67,147,195, max=255)
+#summer.tmean.col= rgb(33,102,172, max=255)
+
+
+June.tmean.col= rgb(244,165,130, max=255)
+May.tmean.col= rgb(214,96,77, max=255)
+summer.tmean.col= rgb(253,219,199, max=255)
 
 #tmean.annual.x1.col= rgb(33,102,172, max=255)
 #tmin.annual.x1.col= rgb(5,48,97, max=255)
@@ -212,17 +222,22 @@ var.coef.vals.p<-c(3226, 0, 6653, 3861, 5880, 6262, 2602, (35646-3226-6653-3861-
 
 var.coef.vals.n<-c(3336, 1587, 8332, 3974, 6872, 7198, 1243, (35646-3336-1587-8332-3974-6872-7198-1243))
 
-
 coefs.matrix=cbind(var.coef.vals.chla, var.coef.vals.secchi, var.coef.vals.p, var.coef.vals.n)
 colors.vars<-c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annual.x1.col, May.tmean.col, June.tmean.col, summer.tmean.col, Other.col)
-par(xpd=NA)
-barplot(coefs.matrix, col=colors.vars, names=c("Chla", "Secchi", "TP", "TN"), ylim=c(0, 36000), xlim=c(0, 7), cex.names=1.5, cex.axis=1.3)
-legend(5.2, 32000, legend=c("November PPT", "January PPT", "Winter PPT", "PrevYear PPT"), fill=c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
-legend(5.2, 24000, legend=c("May Tmean", "June Tmean", "Summer Tmean"), fill=c(May.tmean.col, June.tmean.col, summer.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
+
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/LAGOSclimate")
+
+png("Figures/StackedBar.png",width = 7,height = 5,units = 'in',res=300)
+par(xpd=NA, mar=c(2,4,2,2))
+barplot(coefs.matrix, col=colors.vars, names=c("Chla", "Secchi", "TP", "TN"), ylim=c(0, 36000), xlim=c(0, 7), cex.names=1.5, axes=F)
+axis(2, at=c(0,5000,15000,25000,35000), cex=1.5, cex.axis=1.4,lwd=1.5)
+text(-1.15,18000, "Count", srt=90,cex=1.5)
+legend(4.8, 34000, legend=c("November PPT", "January PPT", "Winter PPT", "PrevYear PPT"), fill=c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
+legend(4.8, 24000, legend=c("May Tmean", "June Tmean", "Summer Tmean"), fill=c(May.tmean.col, June.tmean.col, summer.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
 #legend(5.2, 19000, legend=c("May", "June"), fill=c(May.tmean.col, June.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Early Summer Temp")
 #legend(5.2, 14000, legend=c("Temp Mean", "Temp Min"), fill=c(tmean.annual.x1.col, tmin.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Prev. Year Temperature")
-legend(5.2, 18000, legend=c("Other"), fill=c(Other.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
-
+legend(4.8, 16000, legend=c("Other"), fill=c(Other.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
+dev.off()
 
 
 
