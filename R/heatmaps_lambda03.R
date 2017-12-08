@@ -242,10 +242,10 @@ res <- grid.arrange(
           top_buffer = 0.01), 
   lg_hmap(readRDS("Data/sec_l3_03.rds")))
 
-ggplot2::ggsave(file = "res.png", plot = res, width = 18.5, 
+ggplot2::ggsave(file = "Figures/res.png", plot = res, width = 18.5, 
                 height = 17, units = "in")
 
-img <- image_read("res.png")
-image_write(image_trim(img), "res_trim.png")
+img <- image_read("Figures/res.png")
+image_write(image_trim(img), "Figures/res_trim.png")
 
 # gtable_show_layout(hmap)
