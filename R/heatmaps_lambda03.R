@@ -7,7 +7,8 @@ library(gridExtra)
 library(grid)
 library(magick)
 
-lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02, bottom_buffer = 0.22, right_buffer = 0.1, left_buffer = 0){
+lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02, 
+                    bottom_buffer = 0.22, right_buffer = 0.1, left_buffer = 0){
 
   dt_lambda <- select(dt, -lagoslakeid, -Lat, -Lon)
   # head(dt_lambda)
@@ -95,25 +96,25 @@ lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02, bottom_buffer
                                  }else{
                                    x["time.y"]}
                                })
-  annotation_row$timePeriod[is.na(annotation_row$timePeriod)] <- "interannual"
+  annotation_row$timePeriod[is.na(annotation_row$timePeriod)] <- "annual"
   
-  annotation_row$rank <- as.numeric(annotation_row$rank)
-  annotation_row <- select(annotation_row, -prefix, -suffix)
+  annotation_row$rank       <- as.numeric(annotation_row$rank)
+  annotation_row            <- select(annotation_row, -prefix, -suffix)
   row.names(annotation_row) <- row.names(dt_lambda)
-  annotation_row_col_names <- row.names(annotation_row)
-  annotation_row$names <- row.names(annotation_row)
+  annotation_row_col_names  <- row.names(annotation_row)
+  annotation_row$names      <- row.names(annotation_row)
   
   # order by vartype and rank ####
   row_order <- order(annotation_row$varType,
-                     annotation_row$timePeriod,
                      annotation_row$priorYear,
+                     annotation_row$timePeriod,
                      annotation_row$rank, 
                      annotation_row$names,
                      decreasing = c(TRUE, TRUE, TRUE, FALSE, TRUE))
   annotation_row <- dplyr::arrange(annotation_row, 
                                    desc(varType),
-                                   desc(timePeriod),
                                    desc(priorYear), 
+                                   desc(timePeriod),
                                    rank, 
                                    desc(names))
   row.names(annotation_row) <- annotation_row_col_names[row_order] 
@@ -160,13 +161,13 @@ lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02, bottom_buffer
                    precipitation = var_colors[3],
                    index         = var_colors[2],
                    drought       = var_colors[1]), 
-    timePeriod = c(interannual =  time_colors[1],
-                   annual      =  time_colors[2],
+    timePeriod = c(annual      =  time_colors[2],
                    seasonal    =  time_colors[3],
                    monthly     =  time_colors[4]))
   
   
   annotation_row <- dplyr::select(annotation_row, -rank, -names)
+  annotation_row_ordered <- annotation_row[,c(3, 1, 2)]
   
   # arrange plot ####
   raw_hmap <- pheatmap(dt_lambda, 
@@ -178,13 +179,13 @@ lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02, bottom_buffer
            show_rownames = TRUE,
            show_colnames = FALSE,
            labels_row = labs, 
-           annotation_row = annotation_row,
+           annotation_row = annotation_row_ordered,
            annotation_colors = ann_colors,
            cellheight = 8, 
            silent = TRUE, 
            fontsize = 14)
   
-  w <- c(1.4, 1, 8, 0.3, 1.6, 2.1)
+  w     <- c(1.4, 1, 8, 0.3, 1.6, 2.1)
   blank <- rectGrob(gp = gpar(col = "white"))
   
   if(include_legends){
@@ -201,7 +202,7 @@ lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02, bottom_buffer
                                 blank, 
                                 blank, 
                                 blank, 
-                                widths = w)
+                                 widths = w)
     
     arrangeGrob(hmap, bottom_panel, 
                 nrow = 2, heights = c(1, 0.5), top = " ")
@@ -230,22 +231,28 @@ lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02, bottom_buffer
   }
 }
 
+#### execution block ####
+
 res <- grid.arrange(
   lg_hmap(readRDS("Data/chl_l3_03.rds"), 
           include_legends = FALSE, 
           top_buffer = 0.34, bottom_buffer = 0.12, left_buffer = 3), 
-  lg_hmap(readRDS("Data/n_l3_03.rds"), 
+  lg_hmap(readRDS("Data/sec_l3_03.rds"), 
           include_legends = FALSE, 
           top_buffer = 0.34, bottom_buffer = 0.12, right_buffer = 3.2), 
-  lg_hmap(readRDS("Data/p_l3_03.rds"), 
+  lg_hmap(readRDS("Data/n_l3_03.rds"), 
           include_legends = FALSE, left_buffer = 3, bottom_buffer = 0.5, 
           top_buffer = 0.01), 
-  lg_hmap(readRDS("Data/sec_l3_03.rds")))
+  lg_hmap(readRDS("Data/p_l3_03.rds")))
 
 ggplot2::ggsave(file = "Figures/res.png", plot = res, width = 18.5, 
                 height = 17, units = "in")
 
 img <- image_read("Figures/res.png")
+img <- image_annotate(img, "A", size = 90, gravity = "South", location = "-2000+4500")
+img <- image_annotate(img, "B", size = 90, gravity = "South", location = "+2000+4500")
+img <- image_annotate(img, "C", size = 90, gravity = "South", location = "-2000+2500")
+img <- image_annotate(img, "D", size = 90, gravity = "South", location = "+2000+2500")
 image_write(image_trim(img), "Figures/res_trim.png")
 
 # gtable_show_layout(hmap)
