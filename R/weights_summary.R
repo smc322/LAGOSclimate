@@ -225,11 +225,11 @@ var.coef.vals.n<-c(3336, 1587, 8332, 3974, 6872, 7198, 1243, (35646-3336-1587-83
 coefs.matrix=cbind(var.coef.vals.chla, var.coef.vals.secchi, var.coef.vals.p, var.coef.vals.n)
 colors.vars<-c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annual.x1.col, May.tmean.col, June.tmean.col, summer.tmean.col, Other.col)
 
-setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/LAGOSclimate")
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/LaptopVersion/LAGOSclimate/Figures")
 
 png("Figures/StackedBar.png",width = 7,height = 5,units = 'in',res=300)
 par(xpd=NA, mar=c(2,4,2,2))
-barplot(coefs.matrix, col=colors.vars, names=c("Chla", "Secchi", "TP", "TN"), ylim=c(0, 36000), xlim=c(0, 7), cex.names=1.5, axes=F)
+barplot(coefs.matrix, col=colors.vars, names=c("chlorophyll", "Secchi", "TP", "TN"), ylim=c(0, 36000), xlim=c(0, 7), cex.names=1.5, axes=F)
 axis(2, at=c(0,5000,15000,25000,35000), cex=1.5, cex.axis=1.4,lwd=1.5)
 text(-1.15,18000, "Count", srt=90,cex=1.5)
 legend(4.8, 34000, legend=c("November PPT", "January PPT", "Winter PPT", "PrevYear PPT"), fill=c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
@@ -335,15 +335,22 @@ points(may.ppt.subset.n$Lon, may.ppt.subset.n$Lat, pch=19, col="blue", cex=0.5)
 
 
 #add an r2 figure so everyone can see diff btwn our method and global model. goes chl-secchi-tp-tn, each global then ours - updated with lambda 3 .03 data in Aug 2017
-png("Figures/PredR2.png",width = 7.3,height = 4,units = 'in',res=300)
-r2.vals<-c(.130, .338, .283, .673, .126, .421, .155, .674)
-par(xpd=NA, mar=c(4, 4,2,1))
-barplot(r2.vals, names=c("MLR", "MTL", "MLR", "MTL", "MLR", "MTL", "MLR", "MTL"), ylim=c(0, .8), col=c("grey30", "grey30", "grey50", "grey50", "grey70", "grey70", "grey90", "grey90"), cex.names=1.2, space=c(.2, .2, 1, .2, 1, .2, 1, .2), axes=F)
+#added second baseline method and erro bars (std from x validation), reformat with legend to fit all labels, add error bars per joe's suggestion Jan 2018
+png("Figures/PredR2.png",width = 6,height = 4,units = 'in',res=300)
+r2.vals<-c(.122, .270, .349, .281, .609, .682, .126, .341, .404, .155, .607, .659)
+par(xpd=NA, mar=c(2, 4,2,1))
+barplot(r2.vals, ylim=c(0, .8), col=c("grey30", "grey50", "grey90"), cex.names=1, space=c(.05, .1,.1, .75, .1, .1, .75, .1,.1, .75, .1, .1), axes=F)
+
+barcenters<-barplot(r2.vals, ylim=c(0, .8), col=c("grey30", "grey50", "grey90"), cex.names=1, space=c(.05, .1,.1, .75, .1, .1, .75, .1,.1, .75, .1, .1), axes=F)
+r2.stdevs<-c(.005, .015, .011, .002, .003, .002, .004, .02, .016, .006, .041, .033)
+segments(barcenters, r2.vals-r2.stdevs, barcenters, r2.vals+r2.stdevs, lwd=2)
+
+legend(-.2, .85, legend=c("MLR-B", "MTL-B", "MTL"), fill=c("grey30", "grey50", "grey90"), bty="n", cex=1.2)
 axis(2, col.axis="black", lwd.ticks=2, lwd=2, cex.axis=1.2)
-segments(-.3, 0, 12.4, 0, lwd=2)
-text(-1.6, .4, expression(paste("R"^"2")), cex=1.4, srt=90, font=2)
-text(1.4, -.16, "Chla", cex=1.4, font=2)
-text(4.5, -.16, "Secchi", cex=1.4, font=2)
-text(7.75, -.16, "TP", cex=1.4, font=2)
-text(11, -.16, "TN", cex=1.4, font=2)
+segments(-.6, 0, 15.2, 0, lwd=2)
+text(-2.5, .4, expression(paste("R"^"2")), cex=1.4, srt=90, font=2)
+text(1.65, -.05, "Chlorophyll", cex=1.4)
+text(5.6, -.044, "Secchi", cex=1.4)
+text(9.55, -.044, "TP", cex=1.4)
+text(13.5, -.044, "TN", cex=1.4)
 dev.off()
