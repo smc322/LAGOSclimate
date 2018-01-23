@@ -225,9 +225,9 @@ var.coef.vals.n<-c(3336, 1587, 8332, 3974, 6872, 7198, 1243, (35646-3336-1587-83
 coefs.matrix=cbind(var.coef.vals.chla, var.coef.vals.secchi, var.coef.vals.p, var.coef.vals.n)
 colors.vars<-c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annual.x1.col, May.tmean.col, June.tmean.col, summer.tmean.col, Other.col)
 
-setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/LaptopVersion/LAGOSclimate/Figures")
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/LAGOSclimate/Figures")
 
-png("Figures/StackedBar.png",width = 7,height = 5,units = 'in',res=300)
+png("Figures/StackedBar2.png",width = 7,height = 5,units = 'in',res=300)
 par(xpd=NA, mar=c(2,4,2,2))
 barplot(coefs.matrix, col=colors.vars, names=c("chlorophyll", "Secchi", "TP", "TN"), ylim=c(0, 36000), xlim=c(0, 7), cex.names=1.5, axes=F)
 axis(2, at=c(0,5000,15000,25000,35000), cex=1.5, cex.axis=1.4,lwd=1.5)
