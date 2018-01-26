@@ -1,12 +1,13 @@
 #save number of obeservations for each variable for use in other analyses, and calculate 5 and 15 year data lakes for table of limno data
 
 setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/LAGOSclimate")
-limnodata<-readRDS(file="Data/LimnoData.rds")
+limnodata<-readRDS(file="Data/MTLinputdata_feb2017.rds")
 
-pdata<-na.omit(limnodata[,c(1:3,7:10)])
-chladata<-na.omit(limnodata[,c(1:2,4,7:10 )])
-secdata<-na.omit(limnodata[,c(1:2, 5, 7:10)])
-ndata<-na.omit(limnodata[,c(1:2, 6, 7:10)])
+
+pdata<-na.omit(limnodata[,c(1:2,4)])
+chladata<-na.omit(limnodata[,c(1:2,5 )])
+secdata<-na.omit(limnodata[,c(1:2, 6)])
+ndata<-na.omit(limnodata[,c(1:2, 7)])
 
 library(dplyr)
 pnobs<-count(pdata, lagoslakeid)
