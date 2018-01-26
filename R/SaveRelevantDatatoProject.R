@@ -29,10 +29,6 @@ feb2017inputdata<-read.csv("ClimateCompiled_1.087_updated_Feb2017_summer.csv", h
 saveRDS(feb2017inputdata, file="Data/MTLInputData_feb2017.rds")
 
 
-#combined file I sent to SY for MTL analysis from climatelimnomerge.R
-
-saveRDS(limno.all.climate.palmer, file="Data/LimnoandClimateforMTLanalysis.rds")
-
 #and original palmer, nao and enso from climatelimnomerge.R
 
 phdi.seasons.nona<-na.omit(phdi.seasons)
