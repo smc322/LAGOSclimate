@@ -19,9 +19,14 @@ saveRDS(hu12.tmean.season, file="Data/hu12.tmean.season.rds")
 saveRDS(hu12.ppt.season, file="Data/hu12.ppt.season.rds")
 
 
-#limno data - run script to get lakes.limno
+#limno data - input file that Shuai used for FEb 2017 analysis
+setwd("~/Dropbox/CSI&CL/CSI_LIMNO_Manuscripts-presentations/CSI_ClimateWaterQual/Data/updated_feb2017")
 
-saveRDS(lakes.limno, file="Data/LimnoData.rds")
+feb2017inputdata<-read.csv("ClimateCompiled_1.087_updated_Feb2017_summer.csv", header=T)
+
+  setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/LAGOSclimate")
+
+saveRDS(feb2017inputdata, file="Data/MTLInputData_feb2017.rds")
 
 
 #combined file I sent to SY for MTL analysis from climatelimnomerge.R
