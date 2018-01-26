@@ -24,9 +24,14 @@ setwd("~/Dropbox/CSI&CL/CSI_LIMNO_Manuscripts-presentations/CSI_ClimateWaterQual
 
 feb2017inputdata<-read.csv("ClimateCompiled_1.087_updated_Feb2017_summer.csv", header=T)
 
-  setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/LAGOSclimate")
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/LAGOSclimate")
 
-saveRDS(feb2017inputdata, file="Data/MTLInputData_feb2017.rds")
+##get rid of rows with palmer NAs
+feb2017inputdata.nona<-feb2017inputdata[!is.na(feb2017inputdata$palmer.spring),]
+
+
+saveRDS(feb2017inputdata.nona, file="Data/MTLInputData_feb2017.rds")
+
 
 
 #and original palmer, nao and enso from climatelimnomerge.R
