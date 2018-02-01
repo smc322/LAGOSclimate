@@ -205,6 +205,8 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
                                   blank, 
                                   blank, 
                                   widths = w)
+      arrangeGrob(hmap, bottom_panel, 
+                  nrow = 2, heights = c(1, 0.5), top = " ")
       }else{ 
         bottom_panel <- arrangeGrob(blank, 
                                     blank, 
@@ -213,10 +215,11 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
                                     blank, 
                                     blank, 
                                     widths = w)
+        arrangeGrob(bottom_panel, hmap, bottom_panel, 
+                    nrow = 3, heights = c(top_buffer, 1, bottom_buffer), top = " ")
       }
     
-    arrangeGrob(hmap, bottom_panel, 
-                nrow = 2, heights = c(1, 0.5), top = " ")
+    
   }else{
     w <- c(left_buffer, 1.4, 1, 8, 0.3, 0.1, right_buffer)
     hmap         <- arrangeGrob(blank,
@@ -244,10 +247,10 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
 
 #### execution block ####
 
-# set single map
-grid.arrange(lg_hmap(readRDS("Data/sec_l3_03.rds"),
-        include_legends = 1,
-        top_buffer = 0.34, bottom_buffer = 0.12, right_buffer = 3.2))
+# build single map
+# grid.arrange(lg_hmap(readRDS("Data/sec_l3_03.rds"),
+#         include_legends = 1,
+#         top_buffer = 0.34, bottom_buffer = 0.12, right_buffer = 3.2))
 
 # build all maps
 res <- grid.arrange(
@@ -256,7 +259,7 @@ res <- grid.arrange(
           top_buffer = 0.34, bottom_buffer = 0.12, left_buffer = 3), 
   lg_hmap(readRDS("Data/sec_l3_03.rds"), 
           include_legends = 0, 
-          top_buffer = 0.34, bottom_buffer = 0.12, right_buffer = 3.2), 
+          right_buffer = 3.2, bottom_buffer = 0.12, top_buffer = 0.34), 
   lg_hmap(readRDS("Data/n_l3_03.rds"), 
           include_legends = NULL, left_buffer = 3, bottom_buffer = 0.5, 
           top_buffer = 0.01), 
