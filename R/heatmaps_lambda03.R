@@ -165,9 +165,9 @@ lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02,
                    seasonal    =  time_colors[3],
                    monthly     =  time_colors[4]))
   
-  
   annotation_row <- dplyr::select(annotation_row, -rank, -names)
   annotation_row_ordered <- annotation_row[,c(3, 1, 2)]
+  annotation_row_ordered <- dplyr::select(annotation_row_ordered, -priorYear)
   
   # arrange plot ####
   raw_hmap <- pheatmap(dt_lambda, 
@@ -248,6 +248,7 @@ res <- grid.arrange(
 ggplot2::ggsave(file = "Figures/res.png", plot = res, width = 18.5, 
                 height = 17, units = "in")
 
+# Trim and label panels ####
 img <- image_read("Figures/res.png")
 img <- image_annotate(img, "A", size = 90, gravity = "South", location = "-2000+4500")
 img <- image_annotate(img, "B", size = 90, gravity = "South", location = "+2000+4500")
