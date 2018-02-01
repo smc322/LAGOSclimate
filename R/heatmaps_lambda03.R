@@ -7,7 +7,7 @@ library(gridExtra)
 library(grid)
 library(magick)
 
-lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02, 
+lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02, 
                     bottom_buffer = 0.22, right_buffer = 0.1, left_buffer = 0){
 
   dt_lambda <- select(dt, -lagoslakeid, -Lat, -Lon)
@@ -188,21 +188,32 @@ lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02,
   w     <- c(1.4, 1, 8, 0.3, 1.6, 2.1)
   blank <- rectGrob(gp = gpar(col = "white"))
   
-  if(include_legends){
-    hmap         <- arrangeGrob(raw_hmap$gtable$grobs[[2]], 
-                                raw_hmap$gtable$grobs[[3]], 
+  if(length(include_legends) != 0){
+    hmap         <- arrangeGrob(
+                                raw_hmap$gtable$grobs[[2]],
+                                raw_hmap$gtable$grobs[[3]],
                                 raw_hmap$gtable$grobs[[1]],
-                                blank, 
-                                raw_hmap$gtable$grobs[[6]], 
-                                raw_hmap$gtable$grobs[[5]], 
+                                blank,
+                                raw_hmap$gtable$grobs[[include_legends + 5]],
+                                blank,
                                 widths = w)
-    bottom_panel <- arrangeGrob(blank, 
-                                raw_hmap$gtable$grobs[[4]], 
-                                blank, 
-                                blank, 
-                                blank, 
-                                blank, 
-                                 widths = w)
+    if(include_legends == 1){
+      bottom_panel <- arrangeGrob(blank, 
+                                  raw_hmap$gtable$grobs[[4]], 
+                                  blank, 
+                                  blank, 
+                                  blank, 
+                                  blank, 
+                                  widths = w)
+      }else{ 
+        bottom_panel <- arrangeGrob(blank, 
+                                    blank, 
+                                    blank, 
+                                    blank, 
+                                    blank, 
+                                    blank, 
+                                    widths = w)
+      }
     
     arrangeGrob(hmap, bottom_panel, 
                 nrow = 2, heights = c(1, 0.5), top = " ")
@@ -233,27 +244,33 @@ lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02,
 
 #### execution block ####
 
+# set single map
+grid.arrange(lg_hmap(readRDS("Data/sec_l3_03.rds"),
+        include_legends = 1,
+        top_buffer = 0.34, bottom_buffer = 0.12, right_buffer = 3.2))
+
+# build all maps
 res <- grid.arrange(
   lg_hmap(readRDS("Data/chl_l3_03.rds"), 
-          include_legends = FALSE, 
+          include_legends = NULL, 
           top_buffer = 0.34, bottom_buffer = 0.12, left_buffer = 3), 
   lg_hmap(readRDS("Data/sec_l3_03.rds"), 
-          include_legends = FALSE, 
+          include_legends = 0, 
           top_buffer = 0.34, bottom_buffer = 0.12, right_buffer = 3.2), 
   lg_hmap(readRDS("Data/n_l3_03.rds"), 
-          include_legends = FALSE, left_buffer = 3, bottom_buffer = 0.5, 
+          include_legends = NULL, left_buffer = 3, bottom_buffer = 0.5, 
           top_buffer = 0.01), 
-  lg_hmap(readRDS("Data/p_l3_03.rds")))
+  lg_hmap(readRDS("Data/p_l3_03.rds"), include_legends = 1))
 
 ggplot2::ggsave(file = "Figures/res.png", plot = res, width = 18.5, 
                 height = 17, units = "in")
 
 # Trim and label panels ####
 img <- image_read("Figures/res.png")
-img <- image_annotate(img, "A", size = 90, gravity = "South", location = "-2000+4500")
-img <- image_annotate(img, "B", size = 90, gravity = "South", location = "+2000+4500")
-img <- image_annotate(img, "C", size = 90, gravity = "South", location = "-2000+2500")
-img <- image_annotate(img, "D", size = 90, gravity = "South", location = "+2000+2500")
+img <- image_annotate(img, "A. chl", size = 90, gravity = "South", location = "-2000+4500")
+img <- image_annotate(img, "B. Secchi", size = 90, gravity = "South", location = "+2000+4500")
+img <- image_annotate(img, "C. TP", size = 90, gravity = "South", location = "-2000+2500")
+img <- image_annotate(img, "D. TN", size = 90, gravity = "South", location = "+2000+2500")
 image_write(image_trim(img), "Figures/res_trim.png")
 
-# gtable_show_layout(hmap)
+# gtable::gtable_show_layout(hmap)
