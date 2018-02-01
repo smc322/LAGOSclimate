@@ -153,19 +153,19 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
   
   # assign colors ####
   # pal <- choose_palette()
-  var_colors     <- c("#555555", "#989898", "#CACACA", "#E2E2E2")
+  var_colors     <- c("#555555", "#989898", "#CACACA")
   # time_colors    <- c("#46024E", "#007393", "#00C387", "#FDE333")
   time_colors    <- rev(var_colors)
   ann_colors = list(
-    varType    = c(temperature   = var_colors[4], 
-                   precipitation = var_colors[3],
-                   index         = var_colors[2],
-                   drought       = var_colors[1]), 
-    timePeriod = c(annual      =  time_colors[2],
-                   seasonal    =  time_colors[3],
-                   monthly     =  time_colors[4]))
+    varType    = c(temperature   = var_colors[3], 
+                   precipitation = var_colors[2],
+                   index         = var_colors[1]),
+    timePeriod = c(annual      =  time_colors[1],
+                   seasonal    =  time_colors[2],
+                   monthly     =  time_colors[3]))
   
-  annotation_row <- dplyr::select(annotation_row, -rank, -names)
+  annotation_row[annotation_row$varType == "drought", "varType"] <- "index"
+  annotation_row         <- dplyr::select(annotation_row, -rank, -names)
   annotation_row_ordered <- annotation_row[,c(3, 1, 2)]
   annotation_row_ordered <- dplyr::select(annotation_row_ordered, -priorYear)
   
@@ -248,9 +248,9 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
 #### execution block ####
 
 # build single map
-# grid.arrange(lg_hmap(readRDS("Data/sec_l3_03.rds"),
-#         include_legends = 1,
-#         top_buffer = 0.34, bottom_buffer = 0.12, right_buffer = 3.2))
+grid.arrange(lg_hmap(readRDS("Data/sec_l3_03.rds"),
+        include_legends = 1,
+        top_buffer = 0.34, bottom_buffer = 0.12, right_buffer = 3.2))
 
 # build all maps
 res <- grid.arrange(
