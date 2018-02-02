@@ -7,13 +7,12 @@ library(gridExtra)
 library(grid)
 library(magick)
 
-lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02, 
-                    bottom_buffer = 0.22, right_buffer = 0.1, left_buffer = 0){
+lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02, 
+                    bottom_buffer = 0.22, right_buffer = 0, left_buffer = 0, 
+                    manual_labs = NULL){
 
   dt_lambda <- select(dt, -lagoslakeid, -Lat, -Lon)
-  # head(dt_lambda)
   row.names(dt_lambda) <- dt$lagoslakeid
-  # hist(colMeans(dt_lambda))
   dt_lambda <- t(dt_lambda)
   
   # define keys ####
@@ -119,7 +118,6 @@ lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02,
                                    desc(names))
   row.names(annotation_row) <- annotation_row_col_names[row_order] 
   dt_lambda <- dt_lambda[row_order,]
-  # data.frame(a = row.names(dt_lambda), b = row.names(annotation_row))
   
   # format labels ####
   top_labs <- names(rowMeans(dt_lambda)[
@@ -153,21 +151,29 @@ lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02,
   
   # assign colors ####
   # pal <- choose_palette()
-  var_colors     <- c("#555555", "#989898", "#CACACA", "#E2E2E2")
+  var_colors     <- c("#555555", "#989898", "#CACACA")
   # time_colors    <- c("#46024E", "#007393", "#00C387", "#FDE333")
   time_colors    <- rev(var_colors)
   ann_colors = list(
-    varType    = c(temperature   = var_colors[4], 
-                   precipitation = var_colors[3],
-                   index         = var_colors[2],
-                   drought       = var_colors[1]), 
-    timePeriod = c(annual      =  time_colors[2],
-                   seasonal    =  time_colors[3],
-                   monthly     =  time_colors[4]))
+    varType    = c(temperature   = var_colors[3], 
+                   precipitation = var_colors[2],
+                   index         = var_colors[1]),
+    timePeriod = c(annual      =  time_colors[1],
+                   seasonal    =  time_colors[2],
+                   monthly     =  time_colors[3]))
   
-  
-  annotation_row <- dplyr::select(annotation_row, -rank, -names)
+  annotation_row[annotation_row$varType == "drought", "varType"] <- "index"
+  annotation_row         <- dplyr::select(annotation_row, -rank, -names)
   annotation_row_ordered <- annotation_row[,c(3, 1, 2)]
+  annotation_row_ordered <- dplyr::select(annotation_row_ordered, -priorYear)
+
+  if(length(manual_labs) == 0){ # & any(nchar(manual_labs) > 0)
+    labs_save <- labs
+    labs <- rep(" ", length(labs))
+  }else{
+    labs[nchar(manual_labs) > 0] <- manual_labs[nchar(manual_labs) > 0]
+    labs_save <- labs
+  }
   
   # arrange plot ####
   raw_hmap <- pheatmap(dt_lambda, 
@@ -185,27 +191,49 @@ lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02,
            silent = TRUE, 
            fontsize = 14)
   
-  w     <- c(1.4, 1, 8, 0.3, 1.6, 2.1)
+  w     <- c(left_buffer, 1.4, 1, 8, 0.3, 2.5, right_buffer) 
   blank <- rectGrob(gp = gpar(col = "white"))
   
-  if(include_legends){
-    hmap         <- arrangeGrob(raw_hmap$gtable$grobs[[2]], 
-                                raw_hmap$gtable$grobs[[3]], 
+  if(length(include_legends) != 0){
+    hmap         <- arrangeGrob(
+                                blank,
+                                raw_hmap$gtable$grobs[[2]],
+                                raw_hmap$gtable$grobs[[3]],
                                 raw_hmap$gtable$grobs[[1]],
-                                blank, 
-                                raw_hmap$gtable$grobs[[6]], 
-                                raw_hmap$gtable$grobs[[5]], 
+                                blank,
+                                raw_hmap$gtable$grobs[[include_legends + 5]],
+                                blank,
                                 widths = w)
-    bottom_panel <- arrangeGrob(blank, 
-                                raw_hmap$gtable$grobs[[4]], 
-                                blank, 
-                                blank, 
-                                blank, 
-                                blank, 
-                                 widths = w)
+    top_panel <- arrangeGrob(blank, 
+                             blank, 
+                             blank, 
+                             blank, 
+                             blank, 
+                             blank, 
+                             widths = w)
+    if(include_legends == 1){
+      bottom_panel <- arrangeGrob(blank, 
+                                  blank, 
+                                  blank,
+                                  blank, 
+                                  blank, 
+                                  blank, 
+                                  widths = w)
+      res <- arrangeGrob(top_panel, hmap, bottom_panel, 
+                  nrow = 3, heights = c(top_buffer, 1, bottom_buffer), top = " ")
+      }else{ 
+        bottom_panel <- arrangeGrob(blank, 
+                                    blank, 
+                                    raw_hmap$gtable$grobs[[4]], 
+                                    blank, 
+                                    blank, 
+                                    blank, 
+                                    widths = w)
+        res <- arrangeGrob(top_panel, hmap, bottom_panel, 
+                    nrow = 3, heights = c(top_buffer, 1, bottom_buffer), top = " ")
+      }
     
-    arrangeGrob(hmap, bottom_panel, 
-                nrow = 2, heights = c(1, 0.5), top = " ")
+    
   }else{
     w <- c(left_buffer, 1.4, 1, 8, 0.3, 0.1, right_buffer)
     hmap         <- arrangeGrob(blank,
@@ -226,33 +254,57 @@ lg_hmap <- function(dt, include_legends = TRUE, top_buffer = 0.02,
                                 blank, 
                                 widths = w)
     
-    arrangeGrob(bottom_panel, hmap, bottom_panel, 
+    res <- arrangeGrob(bottom_panel, hmap, bottom_panel, 
                 nrow = 3, heights = c(top_buffer, 1, bottom_buffer), top = " ")
   }
+  res <- list(res, labs_save)
+  res
 }
 
 #### execution block ####
 
-res <- grid.arrange(
-  lg_hmap(readRDS("Data/chl_l3_03.rds"), 
-          include_legends = FALSE, 
-          top_buffer = 0.34, bottom_buffer = 0.12, left_buffer = 3), 
-  lg_hmap(readRDS("Data/sec_l3_03.rds"), 
-          include_legends = FALSE, 
-          top_buffer = 0.34, bottom_buffer = 0.12, right_buffer = 3.2), 
-  lg_hmap(readRDS("Data/n_l3_03.rds"), 
-          include_legends = FALSE, left_buffer = 3, bottom_buffer = 0.5, 
-          top_buffer = 0.01), 
-  lg_hmap(readRDS("Data/p_l3_03.rds")))
+# build single map
+# grid.arrange(lg_hmap(readRDS("Data/sec_l3_03.rds"),
+#         include_legends = 1,
+#         top_buffer = 0.34, bottom_buffer = 0.12, right_buffer = 3.2)[[1]])
+
+# build all maps
+
+sec_hmap <- lg_hmap(readRDS("Data/sec_l3_03.rds"),
+                    include_legends = 1,
+                    right_buffer = 1.5, bottom_buffer = 0.12, top_buffer = 0.34)
+sec_labs <- sec_hmap[[2]]
+
+
+chl_hmap <-lg_hmap(readRDS("Data/chl_l3_03.rds"),
+              include_legends = NULL,
+              top_buffer = 0.34, bottom_buffer = 0.12, left_buffer = 3,
+              manual_labs = sec_labs)[[1]]
+
+tn_hmap <- lg_hmap(readRDS("Data/n_l3_03.rds"), include_legends = 0,
+                   right_buffer = 1.5, top_buffer = 0.01, bottom_buffer = 0.5)
+
+tn_labs <- tn_hmap[[2]]
+
+tp_hmap <- lg_hmap(readRDS("Data/p_l3_03.rds"),
+              include_legends = NULL,
+              left_buffer = 3, bottom_buffer = 0.5, top_buffer = 0.01,
+              manual_labs = tn_labs)[[1]]
+
+# res <- grid.arrange(chl_hmap, sec_hmap[[1]], tn_hmap, tp_hmap[[1]])
+res <- arrangeGrob(grobs = list(chl_hmap, sec_hmap[[1]], tp_hmap, tn_hmap[[1]]), 
+                   nrow = 2, ncol = 2, padding = unit(0.1, "line"), clip = "on", 
+                   widths = c(2,2))
 
 ggplot2::ggsave(file = "Figures/res.png", plot = res, width = 18.5, 
                 height = 17, units = "in")
 
+# Trim and label panels ####
 img <- image_read("Figures/res.png")
-img <- image_annotate(img, "A", size = 90, gravity = "South", location = "-2000+4500")
-img <- image_annotate(img, "B", size = 90, gravity = "South", location = "+2000+4500")
-img <- image_annotate(img, "C", size = 90, gravity = "South", location = "-2000+2500")
-img <- image_annotate(img, "D", size = 90, gravity = "South", location = "+2000+2500")
+img <- image_annotate(img, "a. chl", size = 90, gravity = "South", location = "-1700+4500")
+img <- image_annotate(img, "b. Secchi", size = 90, gravity = "South", location = "+500+4500")
+img <- image_annotate(img, "c. TP", size = 90, gravity = "South", location = "-1700+2500")
+img <- image_annotate(img, "d. TN", size = 90, gravity = "South", location = "+450+2500")
 image_write(image_trim(img), "Figures/res_trim.png")
 
-# gtable_show_layout(hmap)
+# gtable::gtable_show_layout(hmap)
