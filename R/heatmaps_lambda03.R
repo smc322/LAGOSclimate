@@ -8,7 +8,7 @@ library(grid)
 library(magick)
 
 lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02, 
-                    bottom_buffer = 0.22, right_buffer = 0.1, left_buffer = 0, 
+                    bottom_buffer = 0.22, right_buffer = 0, left_buffer = 0, 
                     manual_labs = NULL){
 
   dt_lambda <- select(dt, -lagoslakeid, -Lat, -Lon)
@@ -204,17 +204,17 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
                                 raw_hmap$gtable$grobs[[include_legends + 5]],
                                 blank,
                                 widths = w)
+    top_panel <- arrangeGrob(blank, 
+                             blank, 
+                             blank, 
+                             blank, 
+                             blank, 
+                             blank, 
+                             widths = w)
     if(include_legends == 1){
       bottom_panel <- arrangeGrob(blank, 
                                   blank, 
-                                  raw_hmap$gtable$grobs[[4]], 
-                                  blank, 
-                                  blank, 
-                                  blank, 
-                                  widths = w)
-      top_panel <- arrangeGrob(blank, 
-                                  blank, 
-                                  blank, 
+                                  blank,
                                   blank, 
                                   blank, 
                                   blank, 
@@ -224,12 +224,12 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
       }else{ 
         bottom_panel <- arrangeGrob(blank, 
                                     blank, 
-                                    blank, 
+                                    raw_hmap$gtable$grobs[[4]], 
                                     blank, 
                                     blank, 
                                     blank, 
                                     widths = w)
-        res <- arrangeGrob(bottom_panel, hmap, bottom_panel, 
+        res <- arrangeGrob(top_panel, hmap, bottom_panel, 
                     nrow = 3, heights = c(top_buffer, 1, bottom_buffer), top = " ")
       }
     
@@ -271,8 +271,8 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
 # build all maps
 
 sec_hmap <- lg_hmap(readRDS("Data/sec_l3_03.rds"),
-                    include_legends = 0,
-                    right_buffer = 2.1, bottom_buffer = 0.12, top_buffer = 0.34)
+                    include_legends = 1,
+                    right_buffer = 1.5, bottom_buffer = 0.12, top_buffer = 0.34)
 sec_labs <- sec_hmap[[2]]
 
 
@@ -281,27 +281,30 @@ chl_hmap <-lg_hmap(readRDS("Data/chl_l3_03.rds"),
               top_buffer = 0.34, bottom_buffer = 0.12, left_buffer = 3,
               manual_labs = sec_labs)[[1]]
 
-tp_hmap <- lg_hmap(readRDS("Data/p_l3_03.rds"), include_legends = 1,
-                   right_buffer = 2.1, top_buffer = 0.01, bottom_buffer = 0.5)
+tn_hmap <- lg_hmap(readRDS("Data/n_l3_03.rds"), include_legends = 0,
+                   right_buffer = 1.5, top_buffer = 0.01, bottom_buffer = 0.5)
 
-tp_labs <- tp_hmap[[2]]
+tn_labs <- tn_hmap[[2]]
 
-tn_hmap <- lg_hmap(readRDS("Data/n_l3_03.rds"),
+tp_hmap <- lg_hmap(readRDS("Data/p_l3_03.rds"),
               include_legends = NULL,
               left_buffer = 3, bottom_buffer = 0.5, top_buffer = 0.01,
-              manual_labs = tp_labs)[[1]]
+              manual_labs = tn_labs)[[1]]
 
-res <- grid.arrange(chl_hmap, sec_hmap[[1]], tn_hmap, tp_hmap[[1]])
+# res <- grid.arrange(chl_hmap, sec_hmap[[1]], tn_hmap, tp_hmap[[1]])
+res <- arrangeGrob(grobs = list(chl_hmap, sec_hmap[[1]], tp_hmap, tn_hmap[[1]]), 
+                   nrow = 2, ncol = 2, padding = unit(0.1, "line"), clip = "on", 
+                   widths = c(2,2))
 
 ggplot2::ggsave(file = "Figures/res.png", plot = res, width = 18.5, 
                 height = 17, units = "in")
 
 # Trim and label panels ####
 img <- image_read("Figures/res.png")
-img <- image_annotate(img, "A. chl", size = 90, gravity = "South", location = "-2000+4500")
-img <- image_annotate(img, "B. Secchi", size = 90, gravity = "South", location = "+2000+4500")
-img <- image_annotate(img, "C. TP", size = 90, gravity = "South", location = "-2000+2500")
-img <- image_annotate(img, "D. TN", size = 90, gravity = "South", location = "+2000+2500")
+img <- image_annotate(img, "a. chl", size = 90, gravity = "South", location = "-1700+4500")
+img <- image_annotate(img, "b. Secchi", size = 90, gravity = "South", location = "+500+4500")
+img <- image_annotate(img, "c. TP", size = 90, gravity = "South", location = "-1700+2500")
+img <- image_annotate(img, "d. TN", size = 90, gravity = "South", location = "+450+2500")
 image_write(image_trim(img), "Figures/res_trim.png")
 
 # gtable::gtable_show_layout(hmap)
