@@ -86,3 +86,20 @@ abline(v=6.5, lty=3)
 mtext("Percent Change", side=2, cex=1.4, line=2.5)
 mtext(c("Chlorophyll", "Secchi", "TP", "TN"), at=c(1.3, 3.5, 5.5, 7.5), side=1, cex=1.4, line=.5)
 dev.off()
+
+
+
+###single panel version of pct change for talks
+png("Figures/TempPrecipBoxplot.png",width = 6,height = 5,units = 'in',res=300)
++par(mar=c(2,4,1,1))
++boxplot(matrix.sums, ylim=c(-.6,.6), names=FALSE, axes=F, lwd.axis=2, cex.axis=1.4, pch=16, outcol=c(rgb(.129,.4,.675,.15), rgb(0.839,.376,.302,.15)), col=c(rgb(.129,.4,.675,.85), rgb(0.839,.376,.302,.85)))
++box(lwd=2)
++axis(side=2, lwd=2, labels=T, cex.axis=1.4)
++abline(h=0, lwd=2, lty=2)
++abline(v=2.5, lty=3)
++abline(v=4.5, lty=3)
++abline(v=6.5, lty=3)
++mtext("Standardized Regression Coefficient", side=2, cex=1.4, line=2.5)
++mtext(c("Chlorophyll", "Secchi", "TP", "TN"), at=c(1.3, 3.5, 5.5, 7.5), side=1, cex=1.4, line=.5)
++legend(7.25, -.4, legend=c("WP", "ST"), fill=c(rgb(.129,.4,.675,.85), rgb(0.839,.376,.302,.85)), bty="n", cex=1.2)
++dev.off()
