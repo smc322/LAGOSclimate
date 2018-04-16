@@ -33,7 +33,37 @@ for (i in 1:(nrow(phdi))) {
   }
 }
 
-  
+  for (i in 1:nrow(phdi)){
+    if (phdi$year[i] %in% seq(1972,2011,4) == TRUE) {
+      phdi$annual[i] = ((phdi$PHDI_Sep[i-1]*30) + 
+                          (phdi$PHDI_Oct[i-1]*31) +
+                          (phdi$PHDI_Nov[i-1]*30) + 
+                          (phdi$PHDI_Dec[i-1]*31) + 
+                          (phdi$PHDI_Jan[i]*31) +
+                          (phdi$PHDI_Feb[i]*29) + 
+                          (phdi$PHDI_Mar[i]*31) + 
+                          (phdi$PHDI_Apr[i]*30) +
+                          (phdi$PHDI_May[i]*31) + 
+                          (phdi$PHDI_Jun[i]*30) + 
+                          (phdi$PHDI_Jul[i]*31) +
+                          (phdi$PHDI_Aug[i]*31))/366
+      
+      
+    } else {
+      phdi$annual[i] = ((phdi$PHDI_Sep[i-1]*30) + 
+                          (phdi$PHDI_Oct[i-1]*31) +
+                          (phdi$PHDI_Nov[i-1]*30) + 
+                          (phdi$PHDI_Dec[i-1]*31) + 
+                          (phdi$PHDI_Jan[i]*31) +
+                          (phdi$PHDI_Feb[i]*28) + 
+                          (phdi$PHDI_Mar[i]*31) + 
+                          (phdi$PHDI_Apr[i]*30) +
+                          (phdi$PHDI_May[i]*31) + 
+                          (phdi$PHDI_Jun[i]*30) + 
+                          (phdi$PHDI_Jul[i]*31) +
+                          (phdi$PHDI_Aug[i]*31))/365
+    }
+  }
 
 #this took freaking forever (hours) to calculate so save it as .csv now for any future needs
 setwd("~/Dropbox/Sarah_Work/Manuscripts/2016_climate_waterqual/Data/Annual_monthly_calculated")
