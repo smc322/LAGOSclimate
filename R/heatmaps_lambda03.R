@@ -1,3 +1,4 @@
+library(fuzzyjoin)
 library(dplyr)
 library(pheatmap)
 library(stringr)
@@ -15,7 +16,7 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
   row.names(dt_lambda) <- dt$lagoslakeid
   dt_lambda <- t(dt_lambda)
   
-  # define keys ####
+  # define keys #
   key <- data.frame(rbind(c("tmean", "temperature"),
         c("tmax"  , "temperature"),
         c("tmin"  , "temperature"),
@@ -103,17 +104,48 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
   annotation_row_col_names  <- row.names(annotation_row)
   annotation_row$names      <- row.names(annotation_row)
   
+  # re-calculate ranks accounting for priorYear
+  date_key_prior <- bind_rows(
+    mutate(date_key, priorYear = "prior"),
+    mutate(date_key, priorYear = "current")) %>%
+    mutate(period = factor(period, levels = c("annual", 
+                                              "winter", "spring", "summer", "fall",
+                                              month.name)), 
+           priorYear = factor(priorYear, levels = c("prior", "current")), 
+           time = factor(time, levels = c("annual", "seasonal", "monthly"))) %>%
+    arrange(time, priorYear) %>%
+    mutate(rank = row_number() - 1)
+  
+  annotation_row <- regex_left_join(annotation_row, date_key_prior, 
+                          by = c("names" = "period", 
+                                 "timePeriod" = "time",
+                                 "priorYear" = "priorYear")) %>%
+    dplyr::select(priorYear = priorYear.x, 
+                  varType,
+                  rank = rank.y,
+                  timePeriod,
+                  names)
+  
+    annotation_row[is.na(annotation_row$rank), "rank"] <- 0
+    annotation_row[annotation_row$rank == 0 & 
+                     annotation_row$priorYear == "current", "rank"] <- 1
+  
   # order by vartype and rank ####
+  # annotation_row$varType[order(annotation_row$varType)]
+  # annotation_row$timePeriod[order(annotation_row$timePeriod)]
+  # annotation_row$rank[order(annotation_row$rank)]
+  # dplyr::filter(annotation_row, rank  == 0)
+  
   row_order <- order(annotation_row$varType,
-                     annotation_row$priorYear,
-                     annotation_row$timePeriod,
+                     # annotation_row$priorYear,
+                     # annotation_row$timePeriod,
                      annotation_row$rank, 
                      annotation_row$names,
-                     decreasing = c(TRUE, TRUE, TRUE, FALSE, TRUE))
+                     decreasing = c(TRUE, FALSE, TRUE))
   annotation_row <- dplyr::arrange(annotation_row, 
                                    desc(varType),
-                                   desc(priorYear), 
-                                   desc(timePeriod),
+                                   # desc(priorYear), 
+                                   # desc(timePeriod),
                                    rank, 
                                    desc(names))
   row.names(annotation_row) <- annotation_row_col_names[row_order] 
@@ -291,6 +323,8 @@ tp_hmap <- lg_hmap(readRDS("Data/p_l3_03.rds"),
               left_buffer = 3, bottom_buffer = 0.5, top_buffer = 0.01,
               manual_labs = tn_labs)[[1]]
 
+# gtable::gtable_show_layout(chl_hmap)
+# plot(sec_hmap[[1]])
 # res <- grid.arrange(chl_hmap, sec_hmap[[1]], tn_hmap, tp_hmap[[1]])
 res <- arrangeGrob(grobs = list(chl_hmap, sec_hmap[[1]], tp_hmap, tn_hmap[[1]]), 
                    nrow = 2, ncol = 2, padding = unit(0.1, "line"), clip = "on", 
@@ -306,5 +340,3 @@ img <- image_annotate(img, "b. Secchi", size = 90, gravity = "South", location =
 img <- image_annotate(img, "c. TP", size = 90, gravity = "South", location = "-1700+2500")
 img <- image_annotate(img, "d. TN", size = 90, gravity = "South", location = "+450+2500")
 image_write(image_trim(img), "Figures/res_trim.png")
-
-# gtable::gtable_show_layout(hmap)
