@@ -12,9 +12,23 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
                     bottom_buffer = 0.22, right_buffer = 0, left_buffer = 0, 
                     manual_labs = NULL){
 
+  col_order <- order(dt$Lon)
   dt_lambda <- select(dt, -lagoslakeid, -Lat, -Lon)
   row.names(dt_lambda) <- dt$lagoslakeid
   dt_lambda <- t(dt_lambda)
+  dt_lambda <- dt_lambda[,col_order]
+  
+  # find banding
+  # browser()
+  # test <- apply(dt_lambda, 2, function(x) sum(x, na.rm = TRUE))
+  # plot(test)
+  # abline(v = c(8000, 9000))
+  # dt$Lon[c(8000, 9000)]
+  # library(sf)
+  # mapview::mapview(
+  #   st_as_sf(
+  #   data.frame(id = c(1, 2), lon = dt$Lon[c(8000, 9000)], lat = dt$Lat[c(8000, 9000)]), 
+  #          coords = c("lon", "lat"), crs = 4326))
   
   # define keys #
   key <- data.frame(rbind(c("tmean", "temperature"),
@@ -131,23 +145,14 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
                      annotation_row$priorYear == "current", "rank"] <- 1
   
   # order by vartype and rank ####
-  # annotation_row$varType[order(annotation_row$varType)]
-  # annotation_row$timePeriod[order(annotation_row$timePeriod)]
-  # annotation_row$rank[order(annotation_row$rank)]
-  # dplyr::filter(annotation_row, rank  == 0)
-  
+    
   row_order <- order(annotation_row$varType,
                      # annotation_row$priorYear,
                      # annotation_row$timePeriod,
-                     annotation_row$rank, 
-                     annotation_row$names,
-                     decreasing = c(TRUE, FALSE, TRUE))
-  annotation_row <- dplyr::arrange(annotation_row, 
-                                   desc(varType),
-                                   # desc(priorYear), 
-                                   # desc(timePeriod),
-                                   rank, 
-                                   desc(names))
+                     -rank(annotation_row$rank), 
+                     decreasing = TRUE)
+    
+  annotation_row <- annotation_row[row_order,]
   row.names(annotation_row) <- annotation_row_col_names[row_order] 
   dt_lambda <- dt_lambda[row_order,]
   
