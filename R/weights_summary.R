@@ -1,6 +1,6 @@
 #originally did this with Dec 2016 data, updated here in July 2017 for April 2017 data from Shuai
 #setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/Data/RegressionWeights_Dec2016")
-setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/Data/RegressionWeights_April2017")
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2019_LAGOSClimateWaterqual/Data/RegressionWeights_April2017")
 
 
 n.weights<-read.csv("nweights.csv", header=T)
@@ -126,7 +126,7 @@ chla.secchi.p.n.123$sum.n.123=rowSums(chla.secchi.p.n.123[,c(14:16)], na.rm=TRUE
 all.coef.summary<-chla.secchi.p.n.123
 all.coef.summary.sums<-all.coef.summary[,c(1, 5, 9, 13, 17)]
 
-setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/ResultsSummaryStats")
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2019_LAGOSClimateWaterqual/ResultsSummaryStats")
 
 write.csv(all.coef.summary, "Coefficient_Counts_Sums_July2017.csv")
 write.csv(all.coef.summary.sums, "Coefficient_Counts_Sums_Top3Combined_July2017.csv")
@@ -227,11 +227,11 @@ colors.vars<-c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annu
 
 setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/LAGOSclimate/Figures")
 
-png("Figures/StackedBar2.png",width = 7,height = 5,units = 'in',res=300)
-par(xpd=NA, mar=c(2,4,2,2))
-barplot(coefs.matrix, col=colors.vars, names=c("chlorophyll", "Secchi", "TP", "TN"), ylim=c(0, 36000), xlim=c(0, 7), cex.names=1.5, axes=F)
+png("Figures/StackedBarUpdatedLabel.png",width = 8,height = 5,units = 'in',res=300)
+par(xpd=NA, mar=c(2.5,5,1.5,0))
+barplot(coefs.matrix, col=colors.vars, names=c("Chlorophyll", "Secchi", "TP", "TN"), ylim=c(0, 36000), xlim=c(0, 7), cex.names=1.2, axes=F)
 axis(2, at=c(0,5000,15000,25000,35000), cex=1.5, cex.axis=1.4,lwd=1.5)
-text(-1.15,18000, "Count", srt=90,cex=1.5)
+text(-1,18000, "Count", srt=90,cex=1.5)
 legend(4.8, 34000, legend=c("November PPT", "January PPT", "Winter PPT", "PrevYear PPT"), fill=c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
 legend(4.8, 24000, legend=c("May Tmean", "June Tmean", "Summer Tmean"), fill=c(May.tmean.col, June.tmean.col, summer.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
 #legend(5.2, 19000, legend=c("May", "June"), fill=c(May.tmean.col, June.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Early Summer Temp")
