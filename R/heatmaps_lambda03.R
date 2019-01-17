@@ -1,3 +1,4 @@
+library(fuzzyjoin)
 library(dplyr)
 library(pheatmap)
 library(stringr)
@@ -11,11 +12,25 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
                     bottom_buffer = 0.22, right_buffer = 0, left_buffer = 0, 
                     manual_labs = NULL){
 
+  col_order <- order(dt$Lon)
   dt_lambda <- select(dt, -lagoslakeid, -Lat, -Lon)
   row.names(dt_lambda) <- dt$lagoslakeid
   dt_lambda <- t(dt_lambda)
+  dt_lambda <- dt_lambda[,col_order]
   
-  # define keys ####
+  # find banding
+  # browser()
+  # test <- apply(dt_lambda, 2, function(x) sum(x, na.rm = TRUE))
+  # plot(test)
+  # abline(v = c(8000, 9000))
+  # dt$Lon[c(8000, 9000)]
+  # library(sf)
+  # mapview::mapview(
+  #   st_as_sf(
+  #   data.frame(id = c(1, 2), lon = dt$Lon[c(8000, 9000)], lat = dt$Lat[c(8000, 9000)]), 
+  #          coords = c("lon", "lat"), crs = 4326))
+  
+  # define keys #
   key <- data.frame(rbind(c("tmean", "temperature"),
         c("tmax"  , "temperature"),
         c("tmin"  , "temperature"),
@@ -103,19 +118,41 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
   annotation_row_col_names  <- row.names(annotation_row)
   annotation_row$names      <- row.names(annotation_row)
   
+  # re-calculate ranks accounting for priorYear
+  date_key_prior <- bind_rows(
+    mutate(date_key, priorYear = "prior"),
+    mutate(date_key, priorYear = "current")) %>%
+    mutate(period = factor(period, levels = c("annual", 
+                                              "winter", "spring", "summer", "fall",
+                                              month.name)), 
+           priorYear = factor(priorYear, levels = c("prior", "current")), 
+           time = factor(time, levels = c("annual", "seasonal", "monthly"))) %>%
+    arrange(time, priorYear) %>%
+    mutate(rank = row_number() - 1)
+  
+  annotation_row <- regex_left_join(annotation_row, date_key_prior, 
+                          by = c("names" = "period", 
+                                 "timePeriod" = "time",
+                                 "priorYear" = "priorYear")) %>%
+    dplyr::select(priorYear = priorYear.x, 
+                  varType,
+                  rank = rank.y,
+                  timePeriod,
+                  names)
+  
+    annotation_row[is.na(annotation_row$rank), "rank"] <- 0
+    annotation_row[annotation_row$rank == 0 & 
+                     annotation_row$priorYear == "current", "rank"] <- 1
+  
   # order by vartype and rank ####
+    
   row_order <- order(annotation_row$varType,
-                     annotation_row$priorYear,
-                     annotation_row$timePeriod,
-                     annotation_row$rank, 
-                     annotation_row$names,
-                     decreasing = c(TRUE, TRUE, TRUE, FALSE, TRUE))
-  annotation_row <- dplyr::arrange(annotation_row, 
-                                   desc(varType),
-                                   desc(priorYear), 
-                                   desc(timePeriod),
-                                   rank, 
-                                   desc(names))
+                     # annotation_row$priorYear,
+                     # annotation_row$timePeriod,
+                     -rank(annotation_row$rank), 
+                     decreasing = TRUE)
+    
+  annotation_row <- annotation_row[row_order,]
   row.names(annotation_row) <- annotation_row_col_names[row_order] 
   dt_lambda <- dt_lambda[row_order,]
   
@@ -174,6 +211,10 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
     labs[nchar(manual_labs) > 0] <- manual_labs[nchar(manual_labs) > 0]
     labs_save <- labs
   }
+  
+  # rename legend keys
+  names(annotation_row_ordered) <- c("time scale", "var type")
+  names(ann_colors) <- c("var type", "time scale")
   
   # arrange plot ####
   raw_hmap <- pheatmap(dt_lambda, 
@@ -291,6 +332,8 @@ tp_hmap <- lg_hmap(readRDS("Data/p_l3_03.rds"),
               left_buffer = 3, bottom_buffer = 0.5, top_buffer = 0.01,
               manual_labs = tn_labs)[[1]]
 
+# gtable::gtable_show_layout(chl_hmap)
+# plot(sec_hmap[[1]])
 # res <- grid.arrange(chl_hmap, sec_hmap[[1]], tn_hmap, tp_hmap[[1]])
 res <- arrangeGrob(grobs = list(chl_hmap, sec_hmap[[1]], tp_hmap, tn_hmap[[1]]), 
                    nrow = 2, ncol = 2, padding = unit(0.1, "line"), clip = "on", 
@@ -301,10 +344,8 @@ ggplot2::ggsave(file = "Figures/res.png", plot = res, width = 18.5,
 
 # Trim and label panels ####
 img <- image_read("Figures/res.png")
-img <- image_annotate(img, "a. chl", size = 90, gravity = "South", location = "-1700+4500")
+img <- image_annotate(img, "a. Chl", size = 90, gravity = "South", location = "-1700+4500")
 img <- image_annotate(img, "b. Secchi", size = 90, gravity = "South", location = "+500+4500")
 img <- image_annotate(img, "c. TP", size = 90, gravity = "South", location = "-1700+2500")
 img <- image_annotate(img, "d. TN", size = 90, gravity = "South", location = "+450+2500")
 image_write(image_trim(img), "Figures/res_trim.png")
-
-# gtable::gtable_show_layout(hmap)
