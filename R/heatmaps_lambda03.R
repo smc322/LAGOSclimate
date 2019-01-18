@@ -1,12 +1,12 @@
 library(fuzzyjoin)
-library(dplyr)
+suppressMessages(library(dplyr))
 library(pheatmap)
 library(stringr)
-library(R.utils)
+suppressMessages(library(R.utils))
 library(viridis)
-library(gridExtra)
+suppressMessages(library(gridExtra))
 library(grid)
-library(magick)
+suppressMessages(library(magick))
 
 lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02, 
                     bottom_buffer = 0.22, right_buffer = 0, left_buffer = 0, 
@@ -344,7 +344,7 @@ ggplot2::ggsave(file = "Figures/res.png", plot = res, width = 18.5,
 
 # Trim and label panels ####
 img <- image_read("Figures/res.png")
-img <- image_annotate(img, "a. Chl", size = 90, gravity = "South", location = "-1700+4500")
+img <- image_annotate(img, "a. Chlorophyll", size = 90, gravity = "South", location = "-1520+4500")
 img <- image_annotate(img, "b. Secchi", size = 90, gravity = "South", location = "+500+4500")
 img <- image_annotate(img, "c. TP", size = 90, gravity = "South", location = "-1700+2500")
 img <- image_annotate(img, "d. TN", size = 90, gravity = "South", location = "+450+2500")
