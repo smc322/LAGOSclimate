@@ -228,7 +228,8 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
            labels_row = labs, 
            annotation_row = annotation_row_ordered,
            annotation_colors = ann_colors,
-           cellheight = 8, 
+           cellheight = 14, 
+           fontsize_row = 13, 
            silent = TRUE, 
            fontsize = 14)
   
