@@ -225,7 +225,7 @@ var.coef.vals.n<-c(3336, 1587, 8332, 3974, 6872, 7198, 1243, (35646-3336-1587-83
 coefs.matrix=cbind(var.coef.vals.chla, var.coef.vals.secchi, var.coef.vals.p, var.coef.vals.n)
 colors.vars<-c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annual.x1.col, May.tmean.col, June.tmean.col, summer.tmean.col, Other.col)
 
-setwd("~/Dropbox/Sarah_Work/Manuscripts/2017_LAGOSClimateWaterqual/LAGOSclimate/Figures")
+setwd("~/Dropbox/Sarah_Work/Manuscripts/2019_LAGOSClimateWaterqual/LAGOSclimate")
 
 png("Figures/StackedBarUpdatedLabel.png",width = 8,height = 5,units = 'in',res=300)
 par(xpd=NA, mar=c(2.5,5,1.5,0))
@@ -233,7 +233,7 @@ barplot(coefs.matrix, col=colors.vars, names=c("Chlorophyll", "Secchi", "TP", "T
 axis(2, at=c(0,5000,15000,25000,35000), cex=1.5, cex.axis=1.4,lwd=1.5)
 text(-1,18000, "Count", srt=90,cex=1.5)
 legend(4.8, 34000, legend=c("November PPT", "January PPT", "Winter PPT", "PrevYear PPT"), fill=c(November.ppt.x1.col, January.ppt.col, ppt.winter.col, precip.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
-legend(4.8, 24000, legend=c("May Tmean", "June Tmean", "Summer Tmean"), fill=c(May.tmean.col, June.tmean.col, summer.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
+legend(4.8, 24000, legend=c("May TM", "June TM", "Summer TM"), fill=c(May.tmean.col, June.tmean.col, summer.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
 #legend(5.2, 19000, legend=c("May", "June"), fill=c(May.tmean.col, June.tmean.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Early Summer Temp")
 #legend(5.2, 14000, legend=c("Temp Mean", "Temp Min"), fill=c(tmean.annual.x1.col, tmin.annual.x1.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n", title="Prev. Year Temperature")
 legend(4.8, 16000, legend=c("Other"), fill=c(Other.col), bg=rgb(1,1,1,.2), cex=1.3, bty="n")
