@@ -1,16 +1,16 @@
 library(fuzzyjoin)
-library(dplyr)
+suppressMessages(library(dplyr))
 library(pheatmap)
 library(stringr)
-library(R.utils)
+suppressMessages(library(R.utils))
 library(viridis)
-library(gridExtra)
+suppressMessages(library(gridExtra))
 library(grid)
-library(magick)
+suppressMessages(library(magick))
 
 lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02, 
                     bottom_buffer = 0.22, right_buffer = 0, left_buffer = 0, 
-                    manual_labs = NULL){
+                    manual_labs = NULL, suppress_cat_key = FALSE){
 
   col_order <- order(dt$Lon)
   dt_lambda <- select(dt, -lagoslakeid, -Lat, -Lon)
@@ -19,7 +19,6 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
   dt_lambda <- dt_lambda[,col_order]
   
   # find banding
-  # browser()
   # test <- apply(dt_lambda, 2, function(x) sum(x, na.rm = TRUE))
   # plot(test)
   # abline(v = c(8000, 9000))
@@ -228,7 +227,8 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
            labels_row = labs, 
            annotation_row = annotation_row_ordered,
            annotation_colors = ann_colors,
-           cellheight = 8, 
+           cellheight = 14, 
+           fontsize_row = 13, 
            silent = TRUE, 
            fontsize = 14)
   
@@ -263,18 +263,41 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
       res <- arrangeGrob(top_panel, hmap, bottom_panel, 
                   nrow = 3, heights = c(top_buffer, 1, bottom_buffer), top = " ")
       }else{ 
-        bottom_panel <- arrangeGrob(blank, 
-                                    blank, 
-                                    raw_hmap$gtable$grobs[[4]], 
-                                    blank, 
-                                    blank, 
-                                    blank, 
-                                    widths = w)
-        res <- arrangeGrob(top_panel, hmap, bottom_panel, 
-                    nrow = 3, heights = c(top_buffer, 1, bottom_buffer), top = " ")
+        if(suppress_cat_key){
+          # browser()
+          # gtable::gtable_show_layout(tp_hmap[[1]])
+          w     <- c(left_buffer, 1.4, 1, 8, 0, 0.3, right_buffer) 
+          hmap         <- arrangeGrob(
+            blank,
+            raw_hmap$gtable$grobs[[2]],
+            raw_hmap$gtable$grobs[[3]],
+            raw_hmap$gtable$grobs[[1]],
+            blank,
+            blank,
+            blank,
+            widths = w)
+          bottom_panel <- arrangeGrob(blank, 
+                                      blank, 
+                                      raw_hmap$gtable$grobs[[4]], 
+                                      blank, 
+                                      blank, 
+                                      blank, 
+                                      widths = w)
+          res <- arrangeGrob(top_panel, hmap, bottom_panel, 
+                             nrow = 3, heights = c(top_buffer, 1, bottom_buffer), top = " ")
+          
+        }else{
+          bottom_panel <- arrangeGrob(blank, 
+                                      blank, 
+                                      raw_hmap$gtable$grobs[[4]], 
+                                      blank, 
+                                      blank, 
+                                      blank, 
+                                      widths = w)
+          res <- arrangeGrob(top_panel, hmap, bottom_panel, 
+                      nrow = 3, heights = c(top_buffer, 1, bottom_buffer), top = " ")
+        }
       }
-    
-    
   }else{
     w <- c(left_buffer, 1.4, 1, 8, 0.3, 0.1, right_buffer)
     hmap         <- arrangeGrob(blank,
@@ -311,31 +334,33 @@ lg_hmap <- function(dt, include_legends = c(1, 2), top_buffer = 0.02,
 
 # build all maps
 
+# include_legends for hmap itself
 sec_hmap <- lg_hmap(readRDS("Data/sec_l3_03.rds"),
                     include_legends = 1,
                     right_buffer = 1.5, bottom_buffer = 0.12, top_buffer = 0.34)
 sec_labs <- sec_hmap[[2]]
 
-
+# include_legends for nothing
 chl_hmap <-lg_hmap(readRDS("Data/chl_l3_03.rds"),
               include_legends = NULL,
               top_buffer = 0.34, bottom_buffer = 0.12, left_buffer = 3,
               manual_labs = sec_labs)[[1]]
 
+# include_legends for row categories
 tn_hmap <- lg_hmap(readRDS("Data/n_l3_03.rds"), include_legends = 0,
                    right_buffer = 1.5, top_buffer = 0.01, bottom_buffer = 0.5)
-
 tn_labs <- tn_hmap[[2]]
 
+# include_legends for row categories labels without key
 tp_hmap <- lg_hmap(readRDS("Data/p_l3_03.rds"),
-              include_legends = NULL,
+              include_legends = 0,
               left_buffer = 3, bottom_buffer = 0.5, top_buffer = 0.01,
-              manual_labs = tn_labs)[[1]]
+              manual_labs = tn_labs, suppress_cat_key = TRUE)
 
-# gtable::gtable_show_layout(chl_hmap)
-# plot(sec_hmap[[1]])
+# gtable::gtable_show_layout(tp_hmap[[1]])
+# plot(tp_hmap[[1]])
 # res <- grid.arrange(chl_hmap, sec_hmap[[1]], tn_hmap, tp_hmap[[1]])
-res <- arrangeGrob(grobs = list(chl_hmap, sec_hmap[[1]], tp_hmap, tn_hmap[[1]]), 
+res <- arrangeGrob(grobs = list(chl_hmap, sec_hmap[[1]], tp_hmap[[1]], tn_hmap[[1]]), 
                    nrow = 2, ncol = 2, padding = unit(0.1, "line"), clip = "on", 
                    widths = c(2,2))
 
@@ -344,7 +369,7 @@ ggplot2::ggsave(file = "Figures/res.png", plot = res, width = 18.5,
 
 # Trim and label panels ####
 img <- image_read("Figures/res.png")
-img <- image_annotate(img, "a. Chl", size = 90, gravity = "South", location = "-1700+4500")
+img <- image_annotate(img, "a. Chlorophyll", size = 90, gravity = "South", location = "-1520+4500")
 img <- image_annotate(img, "b. Secchi", size = 90, gravity = "South", location = "+500+4500")
 img <- image_annotate(img, "c. TP", size = 90, gravity = "South", location = "-1700+2500")
 img <- image_annotate(img, "d. TN", size = 90, gravity = "South", location = "+450+2500")
